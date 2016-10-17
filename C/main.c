@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
 #include "cmd-list.h"
-
-#define EXIT_INVALID_SUBCOMMAND 2
+#include "cmd-init.h"
 
 enum item_status {
     NOT_COMPLETED = 0,
@@ -23,8 +23,10 @@ void usage() {
     );
 }
 
+
 int main(int argc, char *argv[]) {
     struct SubCommand registry[] = {
+        init_subcommand,
         list_subcommand
     };
 
@@ -33,10 +35,15 @@ int main(int argc, char *argv[]) {
         sub_command_name = argv[1];
     }
 
-
     char *sub_command_args[abs(argc - 2)];
     for (int i = 2; i < argc; i++) {
         sub_command_args[i - 2] = argv[i];
+    }
+
+    if (!is_initialized() 
+         && strcmp(sub_command_name, init_subcommand.name) != 0) {
+        printf("Not initialized. Please initialize todo with \"todo init\"\n");
+        return NOT_INITIALIZED;
     }
 
     for (int i=0; i < sizeof(registry)/sizeof(registry[0]); i++) {
