@@ -1,4 +1,4 @@
-# A todo list manager in various languages
+# A todo list manager in C
 Maintains the list of todo items in `~/.todo/todo.txt` file.
 
 ## Commands
