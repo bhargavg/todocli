@@ -3,12 +3,8 @@
 #include <string.h>
 #include "common.h"
 #include "cmd-list.h"
+#include "cmd-add.h"
 #include "cmd-init.h"
-
-enum item_status {
-    NOT_COMPLETED = 0,
-    COMPLETED
-};
 
 void usage() {
     FILE *fp = stderr;
@@ -23,10 +19,11 @@ void usage() {
     );
 }
 
-
 int main(int argc, char *argv[]) {
+
     struct SubCommand registry[] = {
         init_subcommand,
+        add_subcommand,
         list_subcommand
     };
 

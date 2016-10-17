@@ -13,7 +13,8 @@ enum ReturnValue {
     EXECUTION_SUCCESS = 0,
     INVALID_PARAMETERS = 1,
     NOT_INITIALIZED = 2,
-    ENV_HOME_NOT_SET = 3
+    ENV_HOME_NOT_SET = 3,
+    UNKNOWN_ERROR = 4
 };
 
 char *todo_dir_path();

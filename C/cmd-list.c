@@ -2,7 +2,7 @@
 #include "cmd-list.h"
 #include "common.h"
 
-int run_add(int argc, char *argv[]) {
+int run_list(int argc, char *argv[]) {
 
     printf("In list sub command with args: \n");
 
@@ -10,11 +10,11 @@ int run_add(int argc, char *argv[]) {
         printf("%s\n", argv[i]);
     }
 
-    return 123;
+    return EXECUTION_SUCCESS;
 };
 
 const struct SubCommand list_subcommand = {
     "list",
-    run_add
+    run_list
 };
 
