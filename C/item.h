@@ -14,7 +14,6 @@ struct TodoItem {
     char *text;
 };
 
-void get_todo_items(struct TodoItem **buffer, FILE *fp);
 void serialize_item_to_stream(const struct TodoItem item, FILE *fp);
 bool deserialize_item_from_stream(struct TodoItem *item, FILE *fp);
 

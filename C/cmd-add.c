@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include "cmd-add.h"
 #include "common.h"
-#include "item.c"
+#include "item.h"
 
 int run_add(int argc, char *argv[]) {
     if (argc != 1) {
