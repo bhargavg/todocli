@@ -5,9 +5,12 @@
 #include "common.h"
 #include "item.h"
 
+void print_add_help(FILE *);
+
 int run_add(int argc, char *argv[]) {
     if (argc != 1) {
         printf("\"add\" takes only one argument, %d provided\n", argc);
+        print_add_help(stdout);
         return INVALID_PARAMETERS;
     }
 
@@ -29,6 +32,12 @@ int run_add(int argc, char *argv[]) {
 
     return EXECUTION_SUCCESS;
 };
+
+void print_add_help(FILE *fp) {
+    fprintf(fp, "Usage: todo add TODO_TEXT\n\n");
+    fprintf(fp, "Description: %s\n", add_subcommand.description);
+    fprintf(fp, "Example: todo add \"Make Todo great again\"\n");
+}
 
 const struct SubCommand add_subcommand = {
     .name = "add",

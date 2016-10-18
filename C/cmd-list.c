@@ -33,6 +33,11 @@ int run_list(int argc, char *argv[]) {
     return EXECUTION_SUCCESS;
 };
 
+void print_list_help(FILE *fp) {
+    fprintf(fp, "Usage: todo list\n\n");
+    fprintf(fp, "Description: %s\n", list_subcommand.description);
+}
+
 const struct SubCommand list_subcommand = {
     .name = "list",
     .description = "Print all the todo items",

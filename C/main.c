@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    printf("error: Unknown command - %s\n\n", sub_command_name);
     usage(registry, 3);
 
     return EXIT_SUCCESS;

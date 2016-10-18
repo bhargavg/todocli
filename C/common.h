@@ -8,6 +8,7 @@ struct SubCommand {
     char *name;
     char *description;
     int (*run)(int argc, char *argv[]);
+    void (*print_help)(FILE *stream);
 };
 
 enum ReturnValue {
