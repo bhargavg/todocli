@@ -16,11 +16,13 @@ int run_list(int argc, char *argv[]) {
     }
 
     struct TodoItem *item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
+    int i = 1;
     while(deserialize_item_from_stream(item, fp)) {
-        printf("item: %s", item->text);
+        printf("%d: %s\n", i, item->text);
         free(item);
 
         item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
+        i++;
     }
 
     free(item);
