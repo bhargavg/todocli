@@ -30,7 +30,8 @@ int run_add(int argc, char *argv[]) {
 };
 
 const struct SubCommand add_subcommand = {
-    "add",
-    run_add
+    .name = "add",
+    .description = "Add a given item to the todo list",
+    .run = run_add
 };
 

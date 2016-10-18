@@ -6,17 +6,18 @@
 #include "cmd-add.h"
 #include "cmd-init.h"
 
-void usage() {
+void usage(const struct SubCommand sub_commands[], int length) {
     FILE *fp = stderr;
 
     fprintf(fp,
       "Usage: todo [SUB_COMMAND] [ARGUMENTS]\n\n"
       "Sub commands:\n"
-      "  list: Print all the todo items\n"
-      "   add: Add a given item to the todo list\n"
-      "    rm: Remove the todo item\n"
-      "  mark: Mark an item as completed\n\n"
     );
+
+    for (int i = 0; i < length; i++) {
+        const struct SubCommand sub_command = sub_commands[i];
+        fprintf(fp, "%s: %s\n", sub_command.name, sub_command.description);
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("Couldn't get sub command");
+    usage(registry, 3);
 
     return EXIT_SUCCESS;
 }

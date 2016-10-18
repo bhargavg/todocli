@@ -53,7 +53,8 @@ bool is_initialized() {
 }
 
 const struct SubCommand init_subcommand = {
-    "init",
+    .name = "init",
+    .description = "Initialize todo",
     run_init
 };
 

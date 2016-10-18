@@ -32,7 +32,8 @@ int run_list(int argc, char *argv[]) {
 };
 
 const struct SubCommand list_subcommand = {
-    "list",
-    run_list
+    .name = "list",
+    .description = "Print all the todo items",
+    .run = run_list
 };
 

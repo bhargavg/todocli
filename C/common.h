@@ -6,6 +6,7 @@
 
 struct SubCommand {
     char *name;
+    char *description;
     int (*run)(int argc, char *argv[]);
 };
 
