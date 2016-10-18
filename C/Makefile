@@ -3,6 +3,8 @@ program_NAME := todo
 program_SRCS := $(wildcard *.c)
 program_OBJS := ${program_SRCS:.c=.o}
 
+CFLAGS += -g
+
 .PHONY: all clean distclean 
 
 all: $(program_NAME)
