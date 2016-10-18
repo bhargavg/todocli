@@ -24,7 +24,8 @@ int run_list(int argc, char *argv[]) {
     struct TodoItem *item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
     int i = 1;
     while(deserialize_item_from_stream(item, fp)) {
-        printf("%d: %s\n", i, item->text);
+        char *status = (item->status == COMPLETED) ? "✔" : " ";
+        printf("%s %d: %s\n", status, i, item->text);
         free(item);
 
         item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
