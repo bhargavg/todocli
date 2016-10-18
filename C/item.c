@@ -12,27 +12,24 @@ void serialize_item_to_stream(const struct TodoItem item, FILE *fp) {
 }
 
 
-bool deserialize_item_from_stream(struct TodoItem *item, FILE *fp) {
+int deserialize_item_from_stream(struct TodoItem *item, FILE *fp) {
     size_t string_length;
 
-    fread(&((*item).status), sizeof(int), 1, fp);
-    if (feof(fp)) {
-        return false;
+    if (fread(&((*item).status), sizeof(int), 1, fp) != 1) {
+        return UNKNOWN_ERROR;
     }
 
-    fread(&string_length, sizeof(size_t), 1, fp);
-    if (feof(fp)) {
-        return false;
+    if (fread(&string_length, sizeof(size_t), 1, fp) != 1) {
+        return UNKNOWN_ERROR;
     }
 
     item->text = (char *)malloc((string_length + 1) * sizeof(char));
-    fread(item->text, sizeof(char), string_length, fp);
-    if (feof(fp)) {
-        return false;
+    if (fread(item->text, sizeof(char), string_length, fp) != string_length) {
+        return UNKNOWN_ERROR;
     }
 
     //FIXME: change this to proper pointer arithmetic for better readability
     (item->text)[string_length] = '\0';
 
-    return true;
+    return EXECUTION_SUCCESS;
 }

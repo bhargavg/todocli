@@ -5,6 +5,8 @@
 #include "cmd-list.h"
 #include "cmd-add.h"
 #include "cmd-init.h"
+#include "cmd-tick.h"
+#include "cmd-untick.h"
 
 void usage(const struct SubCommand sub_commands[], int length) {
     FILE *fp = stderr;
@@ -25,7 +27,9 @@ int main(int argc, char *argv[]) {
     struct SubCommand registry[] = {
         init_subcommand,
         add_subcommand,
-        list_subcommand
+        list_subcommand,
+        tick_subcommand,
+        untick_subcommand
     };
 
     char *sub_command_name = list_subcommand.name;

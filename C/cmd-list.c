@@ -10,6 +10,7 @@ int run_list(int argc, char *argv[]) {
 
     char *file = todo_file_path();
     FILE *fp = fopen(file, "rb");
+    free(file);
 
     if (fp == NULL) {
         if (errno == ENOENT && is_initialized()){
@@ -21,20 +22,16 @@ int run_list(int argc, char *argv[]) {
         }
     }
 
-    struct TodoItem *item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
     int i = 1;
-    while(deserialize_item_from_stream(item, fp)) {
+    struct TodoItem *item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
+
+    while(deserialize_item_from_stream(item, fp) == EXECUTION_SUCCESS) {
         char *status = (item->status == COMPLETED) ? "✔" : " ";
         printf("%s %d: %s\n", status, i, item->text);
-        free(item);
-
-        item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
         i++;
     }
 
     free(item);
-
-    free(file);
     fclose(fp);
 
     return EXECUTION_SUCCESS;
