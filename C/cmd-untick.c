@@ -52,6 +52,7 @@ void print_untick_help(FILE *fp) {
 const struct SubCommand untick_subcommand = {
     .name = "untick",
     .description = "untick an item as done",
-    .run = run_untick
+    .run = run_untick,
+    .help_printer = print_untick_help
 };
 

@@ -52,6 +52,6 @@ const struct SubCommand tick_subcommand = {
     .name = "tick",
     .description = "tick an item as done",
     .run = run_tick,
-    .print_help = print_tick_help
+    .help_printer = print_tick_help
 };
 

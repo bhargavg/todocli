@@ -55,12 +55,13 @@ bool is_initialized() {
     return initialized;
 }
 
+
 const struct SubCommand init_subcommand = {
     .name = "init",
-    .description = "Initialize todo",
-    run_init
+    .description = "initialize todo",
+    .run = run_init,
+    .help_printer = print_init_help
 };
-
 
 void print_init_help(FILE *fp) {
     fprintf(fp, "Usage: todo init\n\n");

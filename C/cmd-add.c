@@ -42,6 +42,7 @@ void print_add_help(FILE *fp) {
 const struct SubCommand add_subcommand = {
     .name = "add",
     .description = "Add a given item to the todo list",
-    .run = run_add
+    .run = run_add,
+    .help_printer = print_add_help
 };
 
