@@ -20,10 +20,16 @@ enum ReturnValue {
     UNKNOWN_ERROR = 4
 };
 
+enum ArgumentType {
+    VALUE = 0,
+    FLAG = 1,
+    KEY_VALUE = 2
+};
+
 struct Argument {
     char *long_name;
     char *short_name;
-    bool is_flag;
+    enum ArgumentType type;
     int (*value_processor)(char *, void *);
 };
 
@@ -37,5 +43,7 @@ int update_item_status(FILE *, enum ItemStatus);
 int update_item_stats_at_index(FILE *, int, enum ItemStatus);
 
 int sanitized_index_arg_value(char *arg, int *index);
+
+int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, char **invalid_argument);
 
 #endif

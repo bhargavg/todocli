@@ -117,3 +117,42 @@ int sanitized_index_arg_value(char *arg, int *index) {
    *index = value;
    return EXECUTION_SUCCESS;
 }
+
+int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, char **invalid_argument) {
+
+    //FIXME: O(n^2), optimize this
+    for (int i = 0; i < argc; i++) {
+        char *input_arg_string = argv[i];
+        bool arg_found = false;
+
+        for (int j = 0; j < allowed_args_count; j++) {
+            struct Argument arg = allowed_args[j];
+
+            if (strcmp(input_arg_string, arg.long_name) == 0
+                || strcmp(input_arg_string, arg.short_name) == 0) {
+
+                arg_found = true;
+
+                char *value = NULL;
+
+                if (arg.type != FLAG) {
+                    // read the argument value
+                    i++;
+                    value = (i < argc) ? argv[i] : NULL;
+                }
+
+                if (arg.value_processor(value, options_bag) != EXECUTION_SUCCESS) {
+                    *invalid_argument = input_arg_string;
+                }
+
+                break;
+            }
+        }
+
+        if (!arg_found) {
+            *invalid_argument = input_arg_string;
+        }
+    }
+
+    return *invalid_argument ? INVALID_ARGUMENTS : EXECUTION_SUCCESS;
+}

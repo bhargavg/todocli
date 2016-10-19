@@ -6,6 +6,8 @@
 #include "common.h"
 #include "item.h"
 
+void print_list_help(FILE *fp);
+
 struct ListingOptions {
     bool show_only_pending;
 };
@@ -16,52 +18,13 @@ int process_show_only_pending_value(char *arg, void *options_bag) {
     return EXECUTION_SUCCESS;
 }
 
-int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], struct ListingOptions *options, char **invalid_argument) {
-
-    //FIXME: O(n^2), optimize this
-    for (int i = 0; i < argc; i++) {
-        char *input_arg_string = argv[i];
-        bool arg_found = false;
-
-        for (int j = 0; j < allowed_args_count; j++) {
-            struct Argument arg = allowed_args[j];
-
-            if (strcmp(input_arg_string, arg.long_name) == 0
-                || strcmp(input_arg_string, arg.short_name) == 0) {
-
-                arg_found = true;
-
-                char *value = NULL;
-
-                if (!arg.is_flag) {
-                    // read the argument value
-                    i++;
-                    value = (i < argc) ? argv[i] : NULL;
-                }
-
-                if (arg.value_processor(value, options) != EXECUTION_SUCCESS) {
-                    *invalid_argument = input_arg_string;
-                }
-
-                break;
-            }
-        }
-
-        if (!arg_found) {
-            *invalid_argument = input_arg_string;
-        }
-    }
-
-    return *invalid_argument ? INVALID_ARGUMENTS : EXECUTION_SUCCESS;
-}
-
 
 int run_list(int argc, char *argv[]) {
 
     struct ListingOptions options = {0};
 
     struct Argument allowed_args[] = {
-        {.long_name = "--pending", .short_name = "-p", .is_flag = true, .value_processor = process_show_only_pending_value}
+        {.long_name = "--pending", .short_name = "-p", .type = FLAG, .value_processor = process_show_only_pending_value}
     };
 
 
@@ -101,14 +64,15 @@ bailout:
     return EXECUTION_SUCCESS;
 };
 
+const struct SubCommand list_subcommand = {
+    .name = "list",
+    .description = "Print all the todo items",
+    .run = run_list,
+    .help_printer = print_list_help
+};
+
 void print_list_help(FILE *fp) {
     fprintf(fp, "Usage: todo list\n\n");
     fprintf(fp, "Description: %s\n", list_subcommand.description);
 }
-
-const struct SubCommand list_subcommand = {
-    .name = "list",
-    .description = "Print all the todo items",
-    .run = run_list
-};
 
