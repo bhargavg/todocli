@@ -14,10 +14,17 @@ struct SubCommand {
 
 enum ReturnValue {
     EXECUTION_SUCCESS = 0,
-    INVALID_PARAMETERS = 1,
+    INVALID_ARGUMENTS = 1,
     NOT_INITIALIZED = 2,
     ENV_HOME_NOT_SET = 3,
     UNKNOWN_ERROR = 4
+};
+
+struct Argument {
+    char *long_name;
+    char *short_name;
+    bool is_flag;
+    int (*value_processor)(char *, void *);
 };
 
 char *todo_dir_path();

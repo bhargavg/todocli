@@ -16,5 +16,6 @@ struct TodoItem {
 
 void serialize_item_to_stream(const struct TodoItem item, FILE *fp);
 int deserialize_item_from_stream(struct TodoItem *item, FILE *fp);
+bool is_item_completed(struct TodoItem);
 
 #endif

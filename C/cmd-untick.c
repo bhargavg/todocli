@@ -13,14 +13,14 @@ int run_untick(int argc, char *argv[]) {
     if (argc != 1) {
         printf("\"untick\" takes only one argument, %d provided\n", argc);
         print_untick_help(stdout);
-        return INVALID_PARAMETERS;
+        return INVALID_ARGUMENTS;
     }
 
     int index = 0;
-    if (sanitized_index_arg_value(argv[0], &index) == INVALID_PARAMETERS) {
+    if (sanitized_index_arg_value(argv[0], &index) == INVALID_ARGUMENTS) {
         printf("error: invalid argument");
         print_untick_help(stdout);
-        return INVALID_PARAMETERS;
+        return INVALID_ARGUMENTS;
     }
 
     char *file_path = todo_file_path();

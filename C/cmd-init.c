@@ -11,7 +11,7 @@ int run_init(int argc, char *argv[]) {
     if (argc > 0) {
         printf("\"init\" doesnot take any parameters\n");
         print_init_help(stdout);
-        return INVALID_PARAMETERS;
+        return INVALID_ARGUMENTS;
     }
 
     printf("Starting init sequence...\n");

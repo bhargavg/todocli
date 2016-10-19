@@ -11,7 +11,7 @@ int run_add(int argc, char *argv[]) {
     if (argc != 1) {
         printf("\"add\" takes only one argument, %d provided\n", argc);
         print_add_help(stdout);
-        return INVALID_PARAMETERS;
+        return INVALID_ARGUMENTS;
     }
 
     char *file = todo_file_path();

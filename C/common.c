@@ -111,7 +111,7 @@ int sanitized_index_arg_value(char *arg, int *index) {
     long value = strtol(arg, NULL, 10);
 
    if (value > INT_MAX || value < 0) {
-       return INVALID_PARAMETERS;
+       return INVALID_ARGUMENTS;
    }
 
    *index = value;

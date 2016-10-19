@@ -33,3 +33,8 @@ int deserialize_item_from_stream(struct TodoItem *item, FILE *fp) {
 
     return EXECUTION_SUCCESS;
 }
+
+
+bool is_item_completed(struct TodoItem item) {
+    return (item.status == COMPLETED);
+}
