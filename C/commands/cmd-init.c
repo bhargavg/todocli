@@ -3,7 +3,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include "common.h"
+#include "cmd-init.h"
+#include "../common.h"
 
 void print_init_help(FILE *);
 

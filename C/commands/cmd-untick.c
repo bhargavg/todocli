@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-untick.h"
-#include "common.h"
-#include "item.h"
+#include "../common.h"
+#include "../item.h"
 #include "cmd-init.h"
 
 

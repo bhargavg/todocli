@@ -2,7 +2,7 @@
 #define _CMD_ADD_H__
 
 #include <stdbool.h>
-#include "common.h"
+#include "../common.h"
 
 extern const struct SubCommand add_subcommand;
 

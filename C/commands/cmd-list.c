@@ -3,8 +3,8 @@
 #include <errno.h>
 #include "cmd-list.h"
 #include "cmd-init.h"
-#include "common.h"
-#include "item.h"
+#include "../common.h"
+#include "../item.h"
 
 void print_list_help(FILE *fp);
 

@@ -2,7 +2,7 @@
 #define _CMD_LIST_H__
 
 #include <stdbool.h>
-#include "common.h"
+#include "../common.h"
 
 extern const struct SubCommand list_subcommand;
 

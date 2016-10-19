@@ -1,9 +1,11 @@
 # https://sites.google.com/site/michaelsafyan/software-engineering/how-to-write-a-makefile
-program_NAME := todo
-program_SRCS := $(wildcard *.c)
-program_OBJS := ${program_SRCS:.c=.o}
 
 CFLAGS += -g
+
+program_NAME := todo
+program_SRC_SUBDIRS := $(wildcard */)
+program_SRCS := $(wildcard *.c) $(wildcard $(addsuffix *.c,$(program_SRC_SUBDIRS)))
+program_OBJS := ${program_SRCS:.c=.o}
 
 .PHONY: all clean distclean 
 

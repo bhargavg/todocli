@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
-#include "cmd-list.h"
-#include "cmd-add.h"
-#include "cmd-init.h"
-#include "cmd-tick.h"
-#include "cmd-untick.h"
-#include "cmd-rm.h"
+#include "commands/cmd-add.h"
+#include "commands/cmd-list.h"
+#include "commands/cmd-init.h"
+#include "commands/cmd-tick.h"
+#include "commands/cmd-untick.h"
+#include "commands/cmd-rm.h"
 
 void usage(const struct SubCommand sub_commands[], int length) {
     FILE *fp = stderr;

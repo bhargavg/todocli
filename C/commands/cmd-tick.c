@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-tick.h"
-#include "common.h"
-#include "item.h"
 #include "cmd-init.h"
+#include "../common.h"
+#include "../item.h"
 
 void print_tick_help(FILE *);
 

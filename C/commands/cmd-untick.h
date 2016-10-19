@@ -2,7 +2,7 @@
 #define _CMD_UNTICK_H__
 
 #include <stdbool.h>
-#include "common.h"
+#include "../common.h"
 
 extern const struct SubCommand untick_subcommand;
 

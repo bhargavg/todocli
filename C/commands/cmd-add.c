@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-add.h"
-#include "common.h"
-#include "item.h"
+#include "../common.h"
+#include "../item.h"
 
 void print_add_help(FILE *);
 

@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <limits.h>
 #include "common.h"
-#include "cmd-init.h"
+#include "commands/cmd-init.h"
 
 char *todo_dir_path() {
     const char *homedir = getenv("HOME");
