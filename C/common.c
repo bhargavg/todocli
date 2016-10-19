@@ -76,7 +76,7 @@ int update_item_stats_at_index(FILE *fp, int index, enum ItemStatus status) {
     int ret = EXECUTION_SUCCESS;
 
     if ((ret = seek_till_item_index(fp, index)) != EXECUTION_SUCCESS) {
-        printf("error: Unknown error, couldn't modify the todo item");
+        printf("error: Unknown error, couldn't retrive todo item for editing");
         goto bailout;
     }
 

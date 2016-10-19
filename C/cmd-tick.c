@@ -35,7 +35,6 @@ int run_tick(int argc, char *argv[]) {
     }
 
 bailout:
-    fflush(fp);
     free(file_path);
     fclose(fp);
 
