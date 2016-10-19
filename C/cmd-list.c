@@ -47,9 +47,9 @@ int run_list(int argc, char *argv[]) {
     struct TodoItem *item = (struct TodoItem *)malloc(sizeof(struct TodoItem));
 
     while(deserialize_item_from_stream(item, fp) == EXECUTION_SUCCESS) {
-        if (!options.show_only_pending
-                || !is_item_completed(*item)) {
-            char *status = is_item_completed(*item) ? "✔" : " ";
+        if (!is_item_removed(*item) 
+            && (!options.show_only_pending || !is_item_completed(*item))) {
+            char *status = is_item_completed(*item) ? "✔" : (is_item_removed(*item) ? "✘" : " ");
             printf("%s %d: %s\n", status, i, item->text);
         }
 
