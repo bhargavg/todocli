@@ -3,9 +3,15 @@
 CFLAGS += -g
 
 program_NAME := todo
-program_SRC_SUBDIRS := $(wildcard */)
+program_SRC_SUBDIRS := $(filter-out tests/,$(wildcard */))
 program_SRCS := $(wildcard *.c) $(wildcard $(addsuffix *.c,$(program_SRC_SUBDIRS)))
 program_OBJS := ${program_SRCS:.c=.o}
+
+
+program_TEST_NAME := todo-tests
+program_TEST_SRCS := tests/main.c
+program_TEST_OBJS := $(filter-out main.o,$(program_OBJS)) tests/main.o
+
 
 .PHONY: all clean distclean 
 
@@ -16,9 +22,18 @@ $(program_NAME): $(program_OBJS)
 
 clean:
 	@- $(RM) $(program_NAME)
+	@- $(RM) $(program_TEST_NAME)
 	@- $(RM) $(program_OBJS)
+	@- $(RM) $(program_TEST_OBJS)
 
 distclean: clean
+
+
+test: $(program_TEST_NAME)
+	./$<
+
+$(program_TEST_NAME) : $(program_TEST_OBJS)
+	$(LINK.c) $(program_TEST_OBJS) -o $(program_TEST_NAME)
 
 
 #print a variable
