@@ -7,6 +7,7 @@
 #include "cmd-init.h"
 #include "cmd-tick.h"
 #include "cmd-untick.h"
+#include "cmd-rm.h"
 
 void usage(const struct SubCommand sub_commands[], int length) {
     FILE *fp = stderr;
@@ -29,7 +30,8 @@ int main(int argc, char *argv[]) {
         add_subcommand,
         list_subcommand,
         tick_subcommand,
-        untick_subcommand
+        untick_subcommand,
+        rm_subcommand
     };
 
     char *sub_command_name = list_subcommand.name;

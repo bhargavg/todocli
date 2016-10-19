@@ -44,6 +44,7 @@ int update_item_stats_at_index(FILE *, int, enum ItemStatus);
 
 int sanitized_index_arg_value(char *arg, int *index);
 
-int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, char **invalid_argument);
+
+int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, struct Argument values[], int *values_count, char *invalid_args[], int *invalid_args_count);
 
 #endif

@@ -23,21 +23,34 @@ int run_list(int argc, char *argv[]) {
 
     struct ListingOptions options = {0};
 
-    struct Argument allowed_args[] = {
-        {.long_name = "--pending", .short_name = "-p", .type = FLAG, .value_processor = process_show_only_pending_value}
-    };
+    struct Argument allowed_args[] = {{ .long_name = "--pending", 
+                                        .short_name = "-p", 
+                                        .type = FLAG, 
+                                        .value_processor = process_show_only_pending_value }};
 
+    struct Argument values[argc];
+    char **invalid_args = calloc(argc, sizeof(char *));
 
-    char *invalid_argument = NULL;
-    if (process_arguments(argc, argv, 1, allowed_args, &options, &invalid_argument) != EXECUTION_SUCCESS) {
-        printf("error: invalid argument: %s\n", invalid_argument);
+    int values_count   = 0;
+    int invalid_args_count = 0;
+
+    int ret = EXECUTION_SUCCESS;
+
+    if ((ret = process_arguments(argc, argv, 1, allowed_args, &options, values, &values_count, invalid_args, &invalid_args_count)) != EXECUTION_SUCCESS) {
+        printf("error: invalid argument: ");
+
+        for (int i = 0; i < invalid_args_count; i++) {
+            printf("%s ", invalid_args[i]);
+        }
+
+        printf("\n");
+
         return INVALID_ARGUMENTS;
     }
 
 
     char *file_path = todo_file_path();
     FILE *fp = NULL;
-    int ret = EXECUTION_SUCCESS;
 
     if ((ret = open_todo_file_for_editing(file_path, &fp)) != EXECUTION_SUCCESS) {
         goto bailout;
@@ -59,6 +72,7 @@ int run_list(int argc, char *argv[]) {
 
 bailout:
     fclose(fp);
+    free(invalid_args);
     free(file_path);
 
     return EXECUTION_SUCCESS;
