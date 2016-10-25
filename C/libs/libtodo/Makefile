@@ -1,30 +1,21 @@
 # https://sites.google.com/site/michaelsafyan/software-engineering/how-to-write-a-makefile
 
 
-program_NAME := todo
+program_NAME := libtodo.a
 program_SRC_SUBDIRS := $(filter-out tests/,$(wildcard */))
 program_SRCS := $(wildcard *.c) $(wildcard $(addsuffix *.c,$(program_SRC_SUBDIRS)))
 program_OBJS := ${program_SRCS:.c=.o}
-
-program_INCLUDE_DIRS := ./libs/libtodo/
-program_LIBRARY_DIRS := ./libs/libtodo/
-program_LIBRARIES := todo
 
 test_NAME := todo-tests
 test_OBJS := $(filter-out main.o,$(program_OBJS)) tests/main.o
 
 CFLAGS  += -g
-CFLAGS  += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
-LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
-LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 
 .PHONY: all clean distclean 
 
 all: $(program_NAME)
-
 $(program_NAME): $(program_OBJS)
-	cd libs/libtodo; make
-	$(LINK.c) $(program_OBJS) -o $(program_NAME)
+	$(AR) rcs $@ $^
 
 clean:
 	@- $(RM) $(program_NAME)
@@ -33,7 +24,6 @@ clean:
 	@- $(RM) $(test_OBJS)
 
 distclean: clean
-
 
 test: $(test_NAME)
 	./$<

@@ -1,4 +1,4 @@
-#include "lib/minunit.h"
+#include "libs/minunit.h"
 
 void test_setup() {
 }
