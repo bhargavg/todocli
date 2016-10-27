@@ -99,18 +99,38 @@ void free_todo_item(struct TodoItem *item) {
 }
 
 int add_item(struct TodoItem *item, struct TodoListMetadata *metadata) {
-    unsigned long int old_items_count = metadata->items_count;
-    unsigned long int new_items_count = old_items_count + 1;
-    struct TodoItem **new_items = realloc(metadata->items, sizeof(struct TodoItem) * new_items_count);
+    unsigned long int items_count = metadata->items_count;
+    struct TodoItem **new_items = realloc(metadata->items, sizeof(struct TodoItem) * (items_count + 1));
 
     if (new_items == NULL) {
         return UNKNOWN_ERROR;
     }
 
-    new_items[old_items_count] = item;
+    unsigned long int next_identifier = 1;
+
+    if (metadata->items_count > 0) {
+        struct TodoItem *last_item = metadata->items[metadata->items_count - 1];
+        next_identifier = last_item->identifier + 1;
+    }
+
+    item->identifier = next_identifier;
+
+    new_items[metadata->items_count] = item;
 
     metadata->items = new_items;
     metadata->items_count++;
 
     return EXECUTION_SUCCESS;
+}
+
+struct TodoItem *item_with_identifier(unsigned long int identifier, struct TodoListMetadata *metadata) {
+    struct TodoItem *item = NULL;
+    for (unsigned int i = 0; i < metadata->items_count; i++) {
+        if (identifier == metadata->items[i]->identifier) {
+            item = metadata->items[i];
+            break;
+        }
+    }
+
+    return item;
 }

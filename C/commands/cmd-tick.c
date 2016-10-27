@@ -4,41 +4,31 @@
 #include "cmd-tick.h"
 #include "cmd-init.h"
 #include "../common.h"
-#include "../item.h"
+#include "libtodo.h"
 
 void print_tick_help(FILE *);
 
-int run_tick(int argc, char *argv[]) {
+int run_tick(int argc, char *argv[], struct TodoListMetadata *metadata) {
     if (argc != 1) {
         printf("\"tick\" takes only one argument, %d provided\n", argc);
         print_tick_help(stdout);
-        return INVALID_ARGUMENTS;
+        return UNKNOWN_ERROR;
     }
 
-    int index = 0;
-    if (sanitized_index_arg_value(argv[0], &index) == INVALID_ARGUMENTS) {
+    unsigned long int identifier = 0;
+    if (sanitized_index_arg_value(argv[0], &identifier) == UNKNOWN_ERROR) {
         printf("error: invalid argument");
         print_tick_help(stdout);
-        return INVALID_ARGUMENTS;
+        return UNKNOWN_ERROR;
     }
 
-    char *file_path = todo_file_path();
-    FILE *fp = NULL;
-    int ret = EXECUTION_SUCCESS;
-
-    if ((ret = open_todo_file_for_editing(file_path, &fp)) != EXECUTION_SUCCESS) {
-        goto bailout;
+    struct TodoItem *item = item_with_identifier(identifier, metadata);
+    if (item) {
+        item->status = COMPLETED;
+        return EXECUTION_SUCCESS;
     }
 
-    if ((ret = update_item_stats_at_index(fp, index, COMPLETED)) != EXECUTION_SUCCESS) {
-        goto bailout;
-    }
-
-bailout:
-    free(file_path);
-    fclose(fp);
-
-    return ret;
+    return TODO_ITEM_NOT_FOUND;
 };
 
 void print_tick_help(FILE *fp) {

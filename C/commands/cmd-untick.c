@@ -3,44 +3,33 @@
 #include <errno.h>
 #include "cmd-untick.h"
 #include "../common.h"
-#include "../item.h"
 #include "cmd-init.h"
+#include "libtodo.h"
 
 
 void print_untick_help(FILE *fp);
 
-int run_untick(int argc, char *argv[]) {
+int run_untick(int argc, char *argv[], struct TodoListMetadata *metadata) {
     if (argc != 1) {
         printf("\"untick\" takes only one argument, %d provided\n", argc);
         print_untick_help(stdout);
-        return INVALID_ARGUMENTS;
+        return UNKNOWN_ERROR;
     }
 
-    int index = 0;
-    if (sanitized_index_arg_value(argv[0], &index) == INVALID_ARGUMENTS) {
+    unsigned long int identifier = 0;
+    if (sanitized_index_arg_value(argv[0], &identifier) == UNKNOWN_ERROR) {
         printf("error: invalid argument");
         print_untick_help(stdout);
-        return INVALID_ARGUMENTS;
+        return UNKNOWN_ERROR;
     }
 
-    char *file_path = todo_file_path();
-    FILE *fp = NULL;
-    int ret = EXECUTION_SUCCESS;
-
-    if ((ret = open_todo_file_for_editing(file_path, &fp)) != EXECUTION_SUCCESS) {
-        goto bailout;
+    struct TodoItem *item = item_with_identifier(identifier, metadata);
+    if (item) {
+        item->status = NOT_COMPLETED;
+        return EXECUTION_SUCCESS;
     }
 
-    if ((ret = update_item_stats_at_index(fp, index, NOT_COMPLETED)) != EXECUTION_SUCCESS) {
-        goto bailout;
-    }
-
-bailout:
-    fflush(fp);
-    free(file_path);
-    fclose(fp);
-
-    return ret;
+    return TODO_ITEM_NOT_FOUND;
 };
 
 void print_untick_help(FILE *fp) {

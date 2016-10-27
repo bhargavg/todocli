@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-list.h"
-#include "cmd-init.h"
+#include "libtodo.h"
 #include "../common.h"
-#include "../item.h"
 
 void print_list_help(FILE *fp);
 
@@ -19,8 +18,19 @@ int process_show_only_pending_value(char *arg, void *options_bag) {
 }
 
 
-int run_list(int argc, char *argv[]) {
+int run_list(int argc, char *argv[], struct TodoListMetadata *metadata) {
 
+    printf("Version: %lu, items count: %lu\n", metadata->version, metadata->items_count);
+
+    for (unsigned long int i = 0; i < metadata->items_count; i++) {
+        struct TodoItem *item = metadata->items[i];
+        char *status = (item->status == COMPLETED) ? "✔" : ((item->status == REMOVED) ? "✘" : " ");
+        printf("%s %lu: %s\n", status, item->identifier, item->text);
+    }
+
+
+
+    /*
     struct ListingOptions options = {0};
 
     struct Argument allowed_args[] = {{ .long_name = "--pending", 
@@ -74,6 +84,8 @@ bailout:
     fclose(fp);
     free(invalid_args);
     free(file_path);
+
+    */
 
     return EXECUTION_SUCCESS;
 };

@@ -20,7 +20,8 @@ MU_TEST(test_read_write_items) {
     remove_file(file_path);
     remove_directory(dir_path);
 
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(initialize(dir_path) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
 
     FILE *fp = fopen(file_path, "wb");
     mu_check(fp != NULL);
@@ -41,7 +42,8 @@ MU_TEST(test_read_write_items) {
     free_todo_metadata(metadata);
     metadata = NULL;
 
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(initialize(dir_path) == ALREADY_INITIALIZED);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
     mu_check(metadata->items_count == 3);
     mu_check(metadata->items[0]->identifier == 1);
     mu_check(metadata->items[0]->status == NOT_COMPLETED);
@@ -56,6 +58,7 @@ MU_TEST(test_read_write_items) {
     mu_check(strcmp(metadata->items[2]->text, "Ding Dong") == 0);
 
     fclose(fp);
+    free_todo_metadata(metadata);
 
     remove_file(file_path);
     remove_directory(dir_path);

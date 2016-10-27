@@ -19,7 +19,9 @@ MU_TEST(test_initialization_from_scratch) {
     remove_directory(dir_path);
 
     struct TodoListMetadata *data;
-    mu_check(initialize(dir_path, &data) == EXECUTION_SUCCESS);
+    mu_check(!is_initialized(dir_path));
+    mu_check(initialize(dir_path) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &data) == EXECUTION_SUCCESS);
     mu_check(data->version == metadata_current_version);
     mu_check(data->items_count == 0);
 
@@ -38,7 +40,9 @@ MU_TEST(test_initialization_after_already_initialized) {
 
     struct TodoListMetadata *data;
 
-    mu_check(initialize(dir_path, &data) == EXECUTION_SUCCESS);
+    mu_check(is_initialized(dir_path));
+    mu_check(initialize(dir_path) == ALREADY_INITIALIZED);
+    mu_check(load_metadata(dir_path, &data) == EXECUTION_SUCCESS);
     mu_check(data->version == 5);
     mu_check(data->items_count == 0);
 

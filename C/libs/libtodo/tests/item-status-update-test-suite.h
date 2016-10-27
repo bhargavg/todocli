@@ -15,7 +15,9 @@ MU_TEST(test_update_status) {
     remove_directory(dir_path);
 
     struct TodoListMetadata *metadata;
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(!is_initialized(dir_path));
+    mu_check(initialize(dir_path) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
 
     struct TodoItem *item = create_todo_item(1, NOT_COMPLETED, "Oolala");
     mu_check(add_item(item, metadata) == EXECUTION_SUCCESS);
@@ -27,7 +29,7 @@ MU_TEST(test_update_status) {
     fclose(fp);
     free_todo_metadata(metadata);
 
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
     mu_check(metadata->items_count == 1);
 
     metadata->items[0]->status = COMPLETED;
@@ -35,13 +37,15 @@ MU_TEST(test_update_status) {
     fp = fopen(file_path, "wb");
     mu_check(fp != NULL);
     mu_check(write_to_stream(metadata, fp) == EXECUTION_SUCCESS);
+
     fclose(fp);
+    free_todo_metadata(metadata);
 
-
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
     mu_check(metadata->items_count == 1);
     mu_check(metadata->items[0]->status == COMPLETED);
 
+    free_todo_metadata(metadata);
     remove_file(file_path);
     remove_directory(dir_path);
 }

@@ -17,6 +17,13 @@ static const unsigned long int metadata_current_version = 1;
 enum TODO_COMMAND_STATUS {
     EXECUTION_SUCCESS = 0,
     UNKNOWN_ERROR = 1,
+    NOT_INITIALIZED = 2,
+    ALREADY_INITIALIZED = 3,
+    TODO_FILE_NOT_FOUND = 4,
+    INVALID_TODO_FILE = 5,
+    TODO_FILE_WRITE_ERROR = 6,
+    TODO_FILE_READ_ERROR = 7,
+    TODO_ITEM_NOT_FOUND = 8,
 };
 
 enum ItemStatus {
@@ -37,8 +44,11 @@ struct TodoListMetadata {
     struct TodoItem **items;
 };
 
-int initialize(char *dir_path, struct TodoListMetadata **);
+bool is_initialized(char *dir_path);
+int initialize(char *dir_path);
+int load_metadata(char *dir_path, struct TodoListMetadata **);
 int add_item(struct TodoItem *item, struct TodoListMetadata *metadata);
+struct TodoItem *item_with_identifier(unsigned long int identifier, struct TodoListMetadata *metadata);
 int write_to_stream(struct TodoListMetadata *metadata, FILE *fp);
 
 struct TodoItem *create_todo_item(unsigned long int identifier, enum ItemStatus status, char *text);

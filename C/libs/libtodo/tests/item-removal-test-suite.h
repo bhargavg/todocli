@@ -6,7 +6,9 @@ MU_TEST(test_item_removal) {
     remove_directory(dir_path);
 
     struct TodoListMetadata *metadata;
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(!is_initialized(dir_path));
+    mu_check(initialize(dir_path) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
 
     struct TodoItem *item = create_todo_item(1, NOT_COMPLETED, "Oolala");
     mu_check(add_item(item, metadata) == EXECUTION_SUCCESS);
@@ -15,12 +17,15 @@ MU_TEST(test_item_removal) {
     mu_check(fp != NULL);
 
     mu_check(write_to_stream(metadata, fp) == EXECUTION_SUCCESS);
+
     fclose(fp);
     free_todo_metadata(metadata);
 
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
     mu_check(metadata->items_count == 1);
 
+
+    // now change the status to removed and flush to disk
     metadata->items[0]->status = REMOVED;
 
     fp = fopen(file_path, "wb");
@@ -28,8 +33,12 @@ MU_TEST(test_item_removal) {
     mu_check(write_to_stream(metadata, fp) == EXECUTION_SUCCESS);
     fclose(fp);
 
-    mu_check(initialize(dir_path, &metadata) == EXECUTION_SUCCESS);
+
+    // load the items back and check the count
+    mu_check(load_metadata(dir_path, &metadata) == EXECUTION_SUCCESS);
     mu_check(metadata->items_count == 0);
+
+    free_todo_metadata(metadata);
 
     remove_file(file_path);
     remove_directory(dir_path);

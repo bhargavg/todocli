@@ -3,35 +3,23 @@
 #include <errno.h>
 #include "cmd-add.h"
 #include "../common.h"
-#include "../item.h"
+#include "libtodo.h"
 
 void print_add_help(FILE *);
 
-int run_add(int argc, char *argv[]) {
+int run_add(int argc, char *argv[], struct TodoListMetadata *metadata) {
     if (argc != 1) {
         printf("\"add\" takes only one argument, %d provided\n", argc);
         print_add_help(stdout);
-        return INVALID_ARGUMENTS;
+        return UNKNOWN_ERROR;
     }
 
-    char *file = todo_file_path();
-    FILE *fp = fopen(file, "a");
+    char *text = argv[0];
+    // FIXME: Make the identifier generation transparent
+    struct TodoItem *item = create_todo_item(0, NOT_COMPLETED, text);
 
-    if (fp == NULL) {
-        printf("error: %s, failed to write the todo item", strerror(errno));
-        return errno;
-    }
-
-    struct TodoItem item = { .status = NOT_COMPLETED, .text = argv[0]};
-    serialize_item_to_stream(item, fp);
-
-    free(file);
-    fclose(fp);
-
-    printf("Added a new todo item!\n");
-
-    return EXECUTION_SUCCESS;
-};
+    return add_item(item, metadata);
+}
 
 void print_add_help(FILE *fp) {
     fprintf(fp, "Usage: todo add TODO_TEXT\n\n");

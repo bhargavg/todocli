@@ -91,6 +91,8 @@ bailout:
 }
 
 int open_todo_file_for_editing(char *file_path, FILE **fp){
+
+    /*
     FILE *file_p = fopen(file_path, "rb+");
 
     if (file_p == NULL) {
@@ -104,17 +106,13 @@ int open_todo_file_for_editing(char *file_path, FILE **fp){
     }
 
     *fp = file_p;
+    */
 
     return EXECUTION_SUCCESS;
 }
 
-int sanitized_index_arg_value(char *arg, int *index) {
-    long value = strtol(arg, NULL, 10);
-
-   if (value > INT_MAX || value < 0) {
-       return UNKNOWN_ERROR;
-   }
-
+int sanitized_index_arg_value(char *arg, unsigned long int *index) {
+    unsigned long int value = strtoul(arg, NULL, 10);
    *index = value;
    return EXECUTION_SUCCESS;
 }

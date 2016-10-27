@@ -8,7 +8,7 @@
 struct SubCommand {
     char *name;
     char *description;
-    int (*run)(int argc, char *argv[]);
+    int (*run)(int argc, char *argv[], struct TodoListMetadata *metadata);
     void (*help_printer)(FILE *stream);
 };
 
@@ -34,7 +34,7 @@ int seek_till_next_item(FILE *);
 int update_item_status(FILE *, enum ItemStatus);
 int update_item_stats_at_index(FILE *, int, enum ItemStatus);
 
-int sanitized_index_arg_value(char *arg, int *index);
+int sanitized_index_arg_value(char *arg, unsigned long int *index);
 
 
 int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, struct Argument values[], int *values_count, char *invalid_args[], int *invalid_args_count);

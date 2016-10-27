@@ -6,6 +6,4 @@
 
 extern const struct SubCommand init_subcommand;
 
-bool is_initialized();
-
 #endif
