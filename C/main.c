@@ -5,7 +5,8 @@
 
 int main(int argc, char *argv[]) {
 
-    struct TodoListMetadata *metadata = malloc(sizeof(struct TodoListMetadata));
+    struct TodoListMetadata *metadata;
+
     if (initialize("/tmp/ctodo/", &metadata) != EXECUTION_SUCCESS) {
         printf("Failed");
     } else {

@@ -31,6 +31,7 @@ clean:
 	@- $(RM) $(test_NAME)
 	@- $(RM) $(program_OBJS)
 	@- $(RM) $(test_OBJS)
+	@- cd libs/libtodo; make clean
 
 distclean: clean
 

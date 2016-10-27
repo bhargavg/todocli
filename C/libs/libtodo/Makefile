@@ -11,7 +11,7 @@ test_OBJS := $(filter-out main.o,$(program_OBJS)) tests/main.o
 
 CFLAGS  += -g
 
-.PHONY: all clean distclean 
+.PHONY: all clean distclean
 
 all: $(program_NAME)
 $(program_NAME): $(program_OBJS)
