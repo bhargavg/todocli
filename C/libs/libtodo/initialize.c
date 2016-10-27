@@ -4,9 +4,8 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include "libtodo.h"
+#include "common.h"
 
-int read_metadata(FILE *fp, struct TodoListMetadata *metadata);
-bool is_file_empty(FILE *fp);
 int write_default_metadata(FILE *fp);
 
 int initialize(char *dir_path, struct TodoListMetadata **metadata) {
@@ -64,71 +63,50 @@ int initialize(char *dir_path, struct TodoListMetadata **metadata) {
         printf("done\n");
     }
 
-    struct TodoListMetadata *data = malloc(sizeof(struct TodoListMetadata));
-    data->fp = fp;
+    struct TodoListMetadata *data = NULL;
 
-    if (read_metadata(fp, data) != EXECUTION_SUCCESS) {
+    if (read_metadata(&data, fp) != EXECUTION_SUCCESS) {
         printf("error: unknown error occured\n");
         fclose(fp);
-        free(metadata);
+        free_todo_metadata(data);
         free(file_path);
         return UNKNOWN_ERROR;
     }
 
-    struct TodoItem *items = malloc(sizeof(struct TodoListMetadata) * data->items_count);
+    struct TodoItem **items = malloc(sizeof(struct TodoListMetadata *) * data->items_count);
     for (int i = 0; i < data->items_count; i++) {
-        if (read_item_from_stream(&items[i], fp) != EXECUTION_SUCCESS) {
+        struct TodoItem *item = NULL;
+        if (read_item_from_stream(&item, fp) != EXECUTION_SUCCESS
+            || item == NULL) {
             printf("error: unknown error occured\n");
+            fclose(fp);
+            free_todo_metadata(data);
+            free(file_path);
+            free_todo_item(item);
+            return UNKNOWN_ERROR;
         }
+
+        items[i] = item;
     }
 
-    rewind(fp);
-    *metadata = data;
+    fclose(fp);
 
-    free(file_path);
+    data->items = items;
+    *metadata = data;
 
     return ret;
 }
 
-bool is_file_empty(FILE *fp) {
-    if (getc(fp) == EOF) {
-        return true;
-    }
-
-    rewind(fp);
-    return false;
-}
-
 int write_default_metadata(FILE *fp) {
-    unsigned long int version = metadata_current_version;
-    unsigned long int items_count = 0;
+    struct TodoListMetadata *metadata = malloc(sizeof(struct TodoListMetadata));
 
-    if (fwrite(&version, metadata_version_string_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
-    if (fwrite(&items_count, metadata_items_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
+    metadata->version = metadata_current_version;
+    metadata->items_count = 0;
+    metadata->items = NULL;
 
-    return EXECUTION_SUCCESS;
-}
+    int ret = write_metadata(metadata, fp);
 
-int read_metadata(FILE *fp, struct TodoListMetadata *metadata) {
-    unsigned long int version = 0;
-    unsigned long int items_count = 0;
-
-    rewind(fp);
-
-    if (fread(&version, metadata_version_string_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
-
-    if (fread(&items_count, metadata_items_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
-
-    metadata->version = version;
-    metadata->items_count = items_count;
-
-    return EXECUTION_SUCCESS;
+    free_todo_metadata(metadata);
+    
+    return ret;
 }

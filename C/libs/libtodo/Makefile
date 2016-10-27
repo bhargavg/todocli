@@ -7,7 +7,7 @@ program_SRCS := $(wildcard *.c) $(wildcard $(addsuffix *.c,$(program_SRC_SUBDIRS
 program_OBJS := ${program_SRCS:.c=.o}
 
 test_NAME := todo-tests
-test_OBJS := $(filter-out main.o,$(program_OBJS)) tests/main.o
+test_OBJS := $(filter-out main.o,$(program_OBJS)) tests/main.o tests/helpers.o
 
 CFLAGS  += -g
 

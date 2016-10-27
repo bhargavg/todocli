@@ -10,7 +10,7 @@ char *todo_dir_path() {
     const char *homedir = getenv("HOME");
     if (!homedir) {
         printf("HOME environment variable not set");
-        exit(ENV_HOME_NOT_SET);
+        exit(UNKNOWN_ERROR);
     }
 
     char *path = (char *)malloc(strlen(homedir) + 1);
@@ -112,7 +112,7 @@ int sanitized_index_arg_value(char *arg, int *index) {
     long value = strtol(arg, NULL, 10);
 
    if (value > INT_MAX || value < 0) {
-       return INVALID_ARGUMENTS;
+       return UNKNOWN_ERROR;
    }
 
    *index = value;
@@ -174,6 +174,6 @@ int process_arguments(int argc, char *argv[], int allowed_args_count, struct Arg
         }
     }
 
-    return (*invalid_args_count > 0) ? INVALID_ARGUMENTS : EXECUTION_SUCCESS;
+    return (*invalid_args_count > 0) ? UNKNOWN_ERROR : EXECUTION_SUCCESS;
 }
 

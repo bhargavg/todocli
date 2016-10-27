@@ -3,21 +3,13 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "item.h"
+#include "libtodo.h"
 
 struct SubCommand {
     char *name;
     char *description;
     int (*run)(int argc, char *argv[]);
     void (*help_printer)(FILE *stream);
-};
-
-enum ReturnValue {
-    EXECUTION_SUCCESS = 0,
-    INVALID_ARGUMENTS = 1,
-    NOT_INITIALIZED = 2,
-    ENV_HOME_NOT_SET = 3,
-    UNKNOWN_ERROR = 4
 };
 
 enum ArgumentType {

@@ -1,36 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "item.h"
+#include <string.h>
 #include "libtodo.h"
+#include "common.h"
 
-int write_item_to_stream(struct TodoItem item, FILE *fp) {
-    size_t text_length = (item.text == NULL) ? 0 : strlen(item.text);
-
-    if (fwrite(&item.identifier, metadata_item_id_byte_count, 1, fp) != 1) {
+int write_to_stream(struct TodoListMetadata *metadata, FILE *fp) {
+    if (write_metadata(metadata, fp) != EXECUTION_SUCCESS) {
         return UNKNOWN_ERROR;
     }
 
-    if (fwrite(&item.status, metadata_item_status_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
+    unsigned long int items_count = available_items_count(metadata);
+    for (unsigned long int i = 0; i < metadata->items_count; i++) {
+        struct TodoItem *item = metadata->items[i];
 
-    if (fwrite(&text_length, metadata_item_text_length_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    }
+        if (item->status == REMOVED) {
+            continue;
+        }
 
-    if (fwrite(item.text, sizeof(char), text_length, fp) != text_length) {
-        return UNKNOWN_ERROR;
+        char *text = "";
+        size_t text_length = 0;
+        if (item->text != NULL) {
+            text = item->text;
+            text_length = strlen(text);
+        }
+
+        if (fwrite(&(item->identifier), metadata_item_id_byte_count, 1, fp) != 1) {
+            return UNKNOWN_ERROR;
+        }
+
+        if (fwrite(&(item->status), metadata_item_status_byte_count, 1, fp) != 1) {
+            return UNKNOWN_ERROR;
+        }
+
+        if (fwrite(&text_length, metadata_item_text_length_byte_count, 1, fp) != 1) {
+            return UNKNOWN_ERROR;
+        }
+
+        if (fwrite(text, sizeof(char), text_length, fp) != text_length) {
+            return UNKNOWN_ERROR;
+        }
     }
 
     return EXECUTION_SUCCESS;
 }
 
 
-int read_item_from_stream(struct TodoItem *todo_item, FILE *fp) {
+int read_item_from_stream(struct TodoItem **item, FILE *fp) {
     unsigned long int identifier = 0;
     char status = 0;
     size_t string_length = 0;
     char *text = NULL;
+
+    struct TodoItem *todo_item = malloc(sizeof(struct TodoItem));
 
     if (fread(&identifier, metadata_item_id_byte_count, 1, fp) != 1) {
         return UNKNOWN_ERROR;
@@ -55,80 +76,41 @@ int read_item_from_stream(struct TodoItem *todo_item, FILE *fp) {
     todo_item->status = status;
     todo_item->text = (text == NULL) ? "" : text;
 
-    return EXECUTION_SUCCESS;
-}
-
-int update_status(struct TodoItem item, FILE *fp) {
-    if (seek_to_item_with_identifier(item.identifier, fp) != EXECUTION_SUCCESS) {
-        return UNKNOWN_ERROR;
-    }
-
-    if (fwrite(&(item.status), metadata_item_status_byte_count, 1, fp) != 1) {
-        return UNKNOWN_ERROR;
-    } 
+    *item = todo_item;
 
     return EXECUTION_SUCCESS;
 }
 
-int item_with_identifier(unsigned long int identifier, struct TodoItem *item, FILE *fp) {
-    int ret = EXECUTION_SUCCESS;
-    if ((ret = seek_to_item_with_identifier(identifier, fp)) != EXECUTION_SUCCESS) {
-        return ret;
-    }
+struct TodoItem *create_todo_item(unsigned long int identifier, enum ItemStatus status, char *text) {
+    struct TodoItem *item = malloc(sizeof(struct TodoItem));
+    size_t length = (text == NULL) ? 0 : strlen(text);
 
-    return read_item_from_stream(item, fp);
+    item->identifier = identifier;
+    item->status = status;
+    item->text = malloc((length + 1) * sizeof(char));
+    strncpy(item->text, text, length);
+
+    return item;
 }
 
-int seek_to_item_with_identifier(unsigned long int identifier, FILE *fp) {
-    // move to first item;
-    if (seek_to_first_item(fp) != EXECUTION_SUCCESS){
+void free_todo_item(struct TodoItem *item) {
+    free(item->text);
+    free(item);
+}
+
+int add_item(struct TodoItem *item, struct TodoListMetadata *metadata) {
+    unsigned long int old_items_count = metadata->items_count;
+    unsigned long int new_items_count = old_items_count + 1;
+    struct TodoItem **new_items = realloc(metadata->items, sizeof(struct TodoItem) * new_items_count);
+
+    if (new_items == NULL) {
         return UNKNOWN_ERROR;
     }
 
-    unsigned long int item_id = 0;
-    bool found = false;
-    int ret = EXECUTION_SUCCESS;
+    new_items[old_items_count] = item;
 
-    while (true) {
-        if (fread(&item_id, metadata_item_id_byte_count, 1, fp) != 1) {
-            ret = UNKNOWN_ERROR;
-            break;
-        }
-        if (identifier == item_id) {
-            // unread the identifier
-            fseek(fp, -metadata_item_id_byte_count, SEEK_CUR);
-            ret = EXECUTION_SUCCESS;
-            break;
-        }
+    metadata->items = new_items;
+    metadata->items_count++;
 
-        if (fseek(fp, (metadata_item_id_byte_count + metadata_item_status_byte_count), SEEK_CUR) != 0) {
-            ret = UNKNOWN_ERROR;
-            break;
-        }
-
-        size_t text_size = 0;
-        if (fread(&text_size, metadata_item_text_length_byte_count, 1, fp) != 1) {
-            ret = UNKNOWN_ERROR;
-            break;
-        }
-
-        if (fseek(fp, text_size, SEEK_CUR) != 0) {
-            ret = UNKNOWN_ERROR;
-            break;
-        }
-    }
-
-    return ret;
-}
-
-int seek_to_first_item(FILE *fp) {
-    return (fseek(fp, metadata_version_string_byte_count + metadata_items_byte_count, SEEK_SET) == 0) ? EXECUTION_SUCCESS : UNKNOWN_ERROR;
-}
-
-bool is_item_completed(struct TodoItem item) {
-    return (item.status == COMPLETED);
-}
-
-bool is_item_removed(struct TodoItem item) {
-    return (item.status == REMOVED);
+    return EXECUTION_SUCCESS;
 }
