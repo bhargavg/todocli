@@ -16,6 +16,7 @@ char *file_path = "/tmp/ctodo/todo.bin";
 void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
 void die_if_error(int status);
 struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_commands, char *name);
+struct SubCommand get_sub_command(int argc, char *argv[], struct SubCommand registry[], size_t no_of_sub_commands, struct SubCommand default_sub_command);
 
 int main(int argc, char *argv[]) {
     struct SubCommand registry[] = {
@@ -27,18 +28,18 @@ int main(int argc, char *argv[]) {
         rm_subcommand,
     };
 
-    char *sub_command_name = list_subcommand.name;
-    if (argc > 1) {
-        sub_command_name = argv[1];
-    }
+    size_t no_of_sub_commands = 6;
 
     char *sub_command_args[abs(argc - 2)];
     for (int i = 2; i < argc; i++) {
         sub_command_args[i - 2] = argv[i];
     }
 
+
+    struct SubCommand sub_command_to_run = get_sub_command(argc, argv, registry, no_of_sub_commands, list_subcommand);
+
     if (!is_initialized(dir_path)) {
-        if (strcmp(sub_command_name, init_subcommand.name) == 0) {
+        if (strcmp(sub_command_to_run.name, init_subcommand.name) == 0) {
             return init_subcommand.run(argc - 2, sub_command_args, NULL);
         } else {
             printf("Not initialized. Please initialize todo with \"todo init\"\n");
@@ -47,27 +48,32 @@ int main(int argc, char *argv[]) {
     }
 
     struct TodoListMetadata *metadata;
-
     die_if_error(load_metadata(dir_path, &metadata));
-
-
-    struct SubCommand sub_command_to_run = find_sub_command_with_name(registry, 6, sub_command_name);
 
     if (sub_command_to_run.name) {
         sub_command_to_run.run(argc - 2, sub_command_args, metadata);
         flush_items_to_disk(metadata, file_path);
         free_todo_metadata(metadata);
     } else {
-        usage(registry, 6);
+        usage(registry, no_of_sub_commands);
     }
 
     return 0;
 }
 
-struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_commands, char *name) {
+struct SubCommand get_sub_command(int argc, char *argv[], struct SubCommand registry[], size_t no_of_sub_commands, struct SubCommand default_sub_command) {
+    if (argc > 1) {
+        char *sub_command_name = argv[1];
+        return find_sub_command_with_name(registry, no_of_sub_commands, sub_command_name);
+    }
+
+    return default_sub_command;
+}
+
+struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_sub_commands, char *name) {
     struct SubCommand command = {0};
 
-    for (int i=0; i < no_of_commands; i++) {
+    for (int i=0; i < no_of_sub_commands; i++) {
         struct SubCommand sub_command = registry[i];
         if (strcmp(sub_command.name, name) == 0) {
             command = sub_command;
