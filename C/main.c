@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "libtodo.h"
+#include "usage.h"
 #include "commands/cmd-list.h"
 #include "commands/cmd-init.h"
 #include "commands/cmd-add.h"
@@ -12,26 +13,9 @@
 char *dir_path  = "/tmp/ctodo/";
 char *file_path = "/tmp/ctodo/todo.bin";
 
-void die_if_error(int status) {
-    if (status != EXECUTION_SUCCESS) {
-        perror("error: unknown error");
-        exit(status);
-    }
-}
-
-void usage(const struct SubCommand sub_commands[], int length) {
-    FILE *fp = stderr;
-
-    fprintf(fp,
-      "Usage: todo [SUB_COMMAND] [ARGUMENTS]\n\n"
-      "Sub commands:\n"
-    );
-
-    for (int i = 0; i < length; i++) {
-        const struct SubCommand sub_command = sub_commands[i];
-        fprintf(fp, "%s: %s\n", sub_command.name, sub_command.description);
-    }
-}
+void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
+void die_if_error(int status);
+struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_commands, char *name);
 
 int main(int argc, char *argv[]) {
     struct SubCommand registry[] = {
@@ -66,59 +50,45 @@ int main(int argc, char *argv[]) {
 
     die_if_error(load_metadata(dir_path, &metadata));
 
-    for (int i=0; i < sizeof(registry)/sizeof(registry[0]); i++) {
-        struct SubCommand sub_command = registry[i];
 
-        if (strcmp(sub_command.name, sub_command_name) == 0) {
-            sub_command.run(argc - 2, sub_command_args, metadata);
+    struct SubCommand sub_command_to_run = find_sub_command_with_name(registry, 6, sub_command_name);
+
+    if (sub_command_to_run.name) {
+        sub_command_to_run.run(argc - 2, sub_command_args, metadata);
+        flush_items_to_disk(metadata, file_path);
+        free_todo_metadata(metadata);
+    } else {
+        usage(registry, 6);
+    }
+
+    return 0;
+}
+
+struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_commands, char *name) {
+    struct SubCommand command = {0};
+
+    for (int i=0; i < no_of_commands; i++) {
+        struct SubCommand sub_command = registry[i];
+        if (strcmp(sub_command.name, name) == 0) {
+            command = sub_command;
+            break;
         }
     }
 
+    return command;
+}
+
+void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path) {
     FILE *fp = fopen(file_path, "wb");
     die_if_error(fp == NULL);
     die_if_error(write_to_stream(metadata, fp));
     fclose(fp);
+}
 
-    /*
-
-    if (is_initialized(dir_path)) {
-        die_if_error(load_metadata(dir_path, &metadata));
-
-        printf("Version: %lu, items: %lu\n", metadata->version, metadata->items_count);
-        printf("Listing items:\n");
-
-        for (unsigned long int i = 0; i < metadata->items_count; i++) {
-            struct TodoItem *item = metadata->items[i];
-            printf("%s\n", item->text);
-        }
-    } else {
-        die_if_error(initialize(dir_path));
-        die_if_error(load_metadata(dir_path, &metadata));
-
-        struct TodoItem *item = NULL;
-
-        item = create_todo_item(1, COMPLETED, "Oolala");
-        add_item(item, metadata);
-
-        item = create_todo_item(2, NOT_COMPLETED, "Oh yeah");
-        add_item(item, metadata);
-
-        item = create_todo_item(3, REMOVED, "Ding Dong");
-        add_item(item, metadata);
-
-        FILE *fp = fopen(file_path, "wb");
-        if (fp == NULL) {
-            printf("error: can't open todo.bin file for writing");
-            exit(1);
-        }
-
-        die_if_error(write_to_stream(metadata, fp));
-        fclose(fp);
+void die_if_error(int status) {
+    if (status != EXECUTION_SUCCESS) {
+        perror("error: unknown error");
+        exit(status);
     }
-    */
-
-    free_todo_metadata(metadata);
-
-    return 0;
 }
 
