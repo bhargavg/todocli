@@ -25,15 +25,6 @@ struct Argument {
     int (*value_processor)(char *, void *);
 };
 
-char *todo_dir_path();
-char *todo_file_path();
-
-int open_todo_file_for_editing(char *, FILE **fp);
-int seek_till_item_index(FILE *, int);
-int seek_till_next_item(FILE *);
-int update_item_status(FILE *, enum ItemStatus);
-int update_item_stats_at_index(FILE *, int, enum ItemStatus);
-
 int sanitized_index_arg_value(char *arg, unsigned long int *index);
 
 
