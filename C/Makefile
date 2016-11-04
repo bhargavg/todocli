@@ -40,6 +40,7 @@ test: $(test_NAME)
 	./$<
 
 $(test_NAME) : $(test_OBJS)
+	cd libs/libtodo; make
 	$(LINK.c) $(test_OBJS) -o $(test_NAME)
 
 
