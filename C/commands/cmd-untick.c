@@ -2,22 +2,22 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-untick.h"
-#include "../common.h"
-#include "cmd-init.h"
 #include "libtodo.h"
+#include "../common.h"
+#include "../argument-parser.h"
 
 
 void print_untick_help(FILE *fp);
 
-int run_untick(int argc, char *argv[], struct TodoListMetadata *metadata) {
-    if (argc != 1) {
-        printf("\"untick\" takes only one argument, %d provided\n", argc);
+int run_untick(struct Options *options, struct TodoListMetadata *metadata) {
+    if (options->values_count != 1) {
+        printf("\"untick\" takes only one argument, %d provided\n", options->values_count);
         print_untick_help(stdout);
         return UNKNOWN_ERROR;
     }
 
     unsigned long int identifier = 0;
-    if (sanitized_index_arg_value(argv[0], &identifier) == UNKNOWN_ERROR) {
+    if (sanitized_index_arg_value(options->values[0], &identifier) == UNKNOWN_ERROR) {
         printf("error: invalid argument");
         print_untick_help(stdout);
         return UNKNOWN_ERROR;

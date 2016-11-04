@@ -4,20 +4,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include "libs/libtodo/libtodo.h"
+#include "argument-parser.h"
 
 struct SubCommand {
     char *name;
     char *description;
-    int (*run)(int argc, char *argv[], struct TodoListMetadata *metadata);
+    int (*run)(struct Options *options, struct TodoListMetadata *metadata);
     void (*help_printer)(FILE *stream);
-};
-
-struct Context {
-    char *dir_path;
-    char *file_path;
-    struct TodoListMetadata *metadata;
-    int argc;
-    char *argv[];
 };
 
 char *get_default_todo_directory();

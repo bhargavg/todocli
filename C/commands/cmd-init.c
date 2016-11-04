@@ -6,17 +6,18 @@
 #include "cmd-init.h"
 #include "libtodo.h"
 #include "../common.h"
+#include "../argument-parser.h"
 
 void print_init_help(FILE *);
 
-int run_init(int argc, char *argv[], struct TodoListMetadata *metadata) {
-    if (argc > 0) {
+int run_init(struct Options *options, struct TodoListMetadata *metadata) {
+    if (options->values_count > 0) {
         printf("\"init\" doesnot take any parameters\n");
         print_init_help(stdout);
         return UNKNOWN_ERROR;
     }
 
-    return 0; //initialize(dir_path);
+    return initialize(options->dir_path);
 };
 
 

@@ -11,6 +11,7 @@
 #include "commands/cmd-rm.h"
 #include "argument-parser.h"
 
+
 void die_if_error(int status);
 void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
 void get_arguments(struct Argument **arguments, int *count);
@@ -32,6 +33,50 @@ int main(int argc, char *argv[]) {
 
     printf("Subcommand: %s\n", sub_command_name);
     print_options(*options);
+
+
+    struct SubCommand registry[] = {
+        init_subcommand,
+        list_subcommand,
+        add_subcommand,
+        tick_subcommand,
+        untick_subcommand,
+        rm_subcommand,
+    };
+
+    int no_of_sub_commands = 6;
+
+    struct SubCommand command_to_run = list_subcommand;
+
+    if (sub_command_name) {
+        for (int i = 0; i < no_of_sub_commands; i++) {
+            struct SubCommand sub_command = registry[i];
+            if (strcmp(sub_command_name, sub_command.name) == 0) {
+                command_to_run = sub_command;
+                break;
+            }
+        }
+    }
+
+    if (!is_initialized(options->dir_path)) {
+        if (strcmp(command_to_run.name, init_subcommand.name) == 0) {
+            return init_subcommand.run(options, NULL);
+        } else {
+            printf("Not initialized. Please initialize todo with \"todo init\"\n");
+            return NOT_INITIALIZED;
+        }
+    }
+
+    struct TodoListMetadata *metadata;
+    die_if_error(load_metadata(options->dir_path, &metadata));
+
+    if (command_to_run.name) {
+        command_to_run.run(options, metadata);
+        flush_items_to_disk(metadata, options->file_path);
+        free_todo_metadata(metadata);
+    } else {
+        usage(registry, no_of_sub_commands);
+    }
 
 
 

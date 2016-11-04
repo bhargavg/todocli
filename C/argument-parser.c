@@ -7,11 +7,13 @@
 
 #define MAX_VALUES_COUNT 100
 
+extern const char *todo_file_name;
+
 int set_base_directory_option(char *value, struct Options *options) {
     options->dir_path = strdup(value);
     options->file_path = malloc(strlen(value) + strlen("/todo.bin") + 1);
     strcpy(options->file_path, value);
-    strcat(options->file_path, "/todo.bin");
+    strcat(options->file_path, todo_file_name);
     return 0;
 }
 
@@ -32,8 +34,12 @@ int set_pending_option(char *value, struct Options *options) {
 
 struct Options *options_new() {
     struct Options *options = malloc(sizeof(struct Options));
-    options->dir_path = NULL;
-    options->file_path = NULL;
+    options->dir_path = get_default_todo_directory();
+
+    options->file_path = malloc(sizeof(char) * (sizeof(options->dir_path) + sizeof(todo_file_name) + 1));
+    strcpy(options->file_path, options->dir_path);
+    strcat(options->file_path, todo_file_name);
+
     options->all = false;
     options->pending = false;
     options->completed = false;
@@ -68,7 +74,7 @@ void process_args(int argc, char *argv[], struct Argument args[], int args_count
                         arg.parser(NULL, options);
                     } else {
                         i++;
-                        if (i < args_count) {
+                        if (i < argc) {
                             char *arg_value = argv[i];
                             arg.parser(arg_value, options);
                         } else {
@@ -95,8 +101,9 @@ void print_options(struct Options options) {
     printf("    values: ");
 
     for (int i = 0; i < options.values_count; i++) {
-        printf("%s%s", options.values[i], (i >= options.values_count - 1) ? "\n" : ", ");
+        printf("%s%s", options.values[i], (i >= options.values_count - 1) ? "" : ", ");
     }
 
+    printf("\n");
 }
 

@@ -3,18 +3,19 @@
 #include <errno.h>
 #include "cmd-add.h"
 #include "../common.h"
+#include "../argument-parser.h"
 #include "libtodo.h"
 
 void print_add_help(FILE *);
 
-int run_add(int argc, char *argv[], struct TodoListMetadata *metadata) {
-    if (argc != 1) {
-        printf("\"add\" takes only one argument, %d provided\n", argc);
+int run_add(struct Options *options, struct TodoListMetadata *metadata) {
+    if (options->values_count != 1) {
+        printf("\"add\" takes only one argument, %d provided\n", options->values_count);
         print_add_help(stdout);
         return UNKNOWN_ERROR;
     }
 
-    char *text = argv[0];
+    char *text = options->values[0];
     // FIXME: Make the identifier generation transparent
     struct TodoItem *item = create_todo_item(0, NOT_COMPLETED, text);
 

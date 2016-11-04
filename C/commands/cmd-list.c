@@ -4,21 +4,11 @@
 #include "cmd-list.h"
 #include "libtodo.h"
 #include "../common.h"
+#include "../argument-parser.h"
 
 void print_list_help(FILE *fp);
 
-struct ListingOptions {
-    bool show_only_pending;
-};
-
-int process_show_only_pending_value(char *arg, void *options_bag) {
-    struct ListingOptions *options = options_bag;
-    options->show_only_pending = true;
-    return EXECUTION_SUCCESS;
-}
-
-
-int run_list(int argc, char *argv[], struct TodoListMetadata *metadata) {
+int run_list(struct Options *options, struct TodoListMetadata *metadata) {
 
     printf("Version: %lu, items count: %lu\n", metadata->version, metadata->items_count);
 

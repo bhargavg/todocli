@@ -2,21 +2,21 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "cmd-tick.h"
-#include "cmd-init.h"
-#include "../common.h"
 #include "libtodo.h"
+#include "../common.h"
+#include "../argument-parser.h"
 
 void print_tick_help(FILE *);
 
-int run_tick(int argc, char *argv[], struct TodoListMetadata *metadata) {
-    if (argc != 1) {
-        printf("\"tick\" takes only one argument, %d provided\n", argc);
+int run_tick(struct Options *options, struct TodoListMetadata *metadata) {
+    if (options->values_count != 1) {
+        printf("\"tick\" takes only one argument, %d provided\n", options->values_count);
         print_tick_help(stdout);
         return UNKNOWN_ERROR;
     }
 
     unsigned long int identifier = 0;
-    if (sanitized_index_arg_value(argv[0], &identifier) == UNKNOWN_ERROR) {
+    if (sanitized_index_arg_value(options->values[0], &identifier) == UNKNOWN_ERROR) {
         printf("error: invalid argument");
         print_tick_help(stdout);
         return UNKNOWN_ERROR;
