@@ -78,71 +78,6 @@ int main(int argc, char *argv[]) {
         usage(registry, no_of_sub_commands);
     }
 
-
-
-    /*
-    struct SubCommand default_subcommand = list_subcommand;
-
-    char *subcommand_name = (argc > 1) ? argv[1] : default_subcommand.name;
-    char *sub_command_name;
-    char **subcommand_argv;
-    int subcommand_argc = 0;
-
-    extract_sub_command_info(argc, argv, &sub_command_name, &s_argc, &s_argv);
-
-    struct SubCommand registry[] = {
-        init_subcommand,
-        list_subcommand,
-        add_subcommand,
-        tick_subcommand,
-        untick_subcommand,
-        rm_subcommand,
-    };
-
-    int no_of_sub_commands = 6;
-
-    int s_argc = 0;
-    char *s_argv[argc];
-
-
-
-    struct SubCommand sub_command_to_run = get_sub_command(argc, argv, registry, no_of_sub_commands, list_subcommand);
-
-    struct Context *context = malloc(sizeof(struct Context));
-    memset(base_options, NULL, sizeof(struct Context));
-
-    struct Argument change_directory = {
-                                         .long_name  = "--dir",
-                                         .short_name = "-d",
-                                         .type = KEY_VALUE,
-                                         .value_processor = extract_todo_dir,
-                                         .is_valid = NULL
-                                       };
-
-
-    struct SubCommand sub_command_to_run = get_sub_command(argc, argv, registry, no_of_sub_commands, list_subcommand);
-
-    if (!is_initialized(dir_path)) {
-        if (strcmp(sub_command_to_run.name, init_subcommand.name) == 0) {
-            return init_subcommand.run(argc - 2, sub_command_args, NULL);
-        } else {
-            printf("Not initialized. Please initialize todo with \"todo init\"\n");
-            return NOT_INITIALIZED;
-        }
-    }
-
-    struct TodoListMetadata *metadata;
-    die_if_error(load_metadata(dir_path, &metadata));
-
-    if (sub_command_to_run.name) {
-        sub_command_to_run.run(argc - 2, sub_command_args, metadata);
-        flush_items_to_disk(metadata, file_path);
-        free_todo_metadata(metadata);
-    } else {
-        usage(registry, no_of_sub_commands);
-    }
-    */
-
     return 0;
 }
 
@@ -162,7 +97,7 @@ void die_if_error(int status) {
 }
 
 void get_arguments(struct Argument **arguments, int *count) {
-    int args_count = 4;
+    int args_count = 5;
     struct Argument *args = malloc(args_count * sizeof(struct Argument));
 
     args[0].long_name  = strdup("--all");
@@ -183,11 +118,17 @@ void get_arguments(struct Argument **arguments, int *count) {
     args[2].parser     = set_pending_option;
     args[2].is_valid   = NULL;
 
-    args[3].long_name  = strdup("--dir");
-    args[3].short_name = strdup("-d");
-    args[3].is_flag    = false;
-    args[3].parser     = set_base_directory_option;
-    args[3].is_valid = NULL;
+    args[3].long_name  = strdup("--summary");
+    args[3].short_name = strdup("-s");
+    args[3].is_flag    = true;
+    args[3].parser     = set_summary_option;
+    args[3].is_valid   = NULL;
+
+    args[4].long_name  = strdup("--dir");
+    args[4].short_name = strdup("-d");
+    args[4].is_flag    = false;
+    args[4].parser     = set_base_directory_option;
+    args[4].is_valid = NULL;
 
     *arguments = args;
     *count = args_count;

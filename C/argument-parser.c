@@ -32,6 +32,11 @@ int set_pending_option(char *value, struct Options *options) {
     return 0;
 }
 
+int set_summary_option(char *value, struct Options *options) {
+    options->summary = true;
+    return 0;
+}
+
 struct Options *options_new() {
     struct Options *options = malloc(sizeof(struct Options));
     options->dir_path = get_default_todo_directory();
