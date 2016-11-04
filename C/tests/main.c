@@ -1,22 +1,8 @@
 #include "libs/minunit.h"
-
-void test_setup() {
-}
-
-void test_teardown() {
-}
-
-MU_TEST(test_check) {
-    mu_check(5 == 5);
-}
-
-MU_TEST_SUITE(test_suite) {
-    MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
-    MU_RUN_TEST(test_check);
-}
+#include "args-parser-extract-arguments-test-suite.h"
 
 int main(int argc, char *argv[]) {
-    MU_RUN_SUITE(test_suite);
+    MU_RUN_SUITE(arg_parser_extract_arguments_test_suite);
     MU_REPORT();
     return 0;
 }

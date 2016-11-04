@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "libtodo.h"
+#include "libs/libtodo/libtodo.h"
 
 struct SubCommand {
     char *name;
@@ -12,22 +12,19 @@ struct SubCommand {
     void (*help_printer)(FILE *stream);
 };
 
-enum ArgumentType {
-    VALUE = 0,
-    FLAG = 1,
-    KEY_VALUE = 2
+struct Context {
+    char *dir_path;
+    char *file_path;
+    struct TodoListMetadata *metadata;
+    int argc;
+    char *argv[];
 };
 
-struct Argument {
-    char *long_name;
-    char *short_name;
-    enum ArgumentType type;
-    int (*value_processor)(char *, void *);
-};
+char *get_default_todo_directory();
+void die(int status, char *message);
 
 int sanitized_index_arg_value(char *arg, unsigned long int *index);
 
-
-int process_arguments(int argc, char *argv[], int allowed_args_count, struct Argument allowed_args[], void *options_bag, struct Argument values[], int *values_count, char *invalid_args[], int *invalid_args_count);
+bool has_prefix(const char *str, const char *pre);
 
 #endif

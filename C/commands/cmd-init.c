@@ -7,8 +7,6 @@
 #include "libtodo.h"
 #include "../common.h"
 
-extern char *dir_path;
-
 void print_init_help(FILE *);
 
 int run_init(int argc, char *argv[], struct TodoListMetadata *metadata) {
@@ -18,7 +16,7 @@ int run_init(int argc, char *argv[], struct TodoListMetadata *metadata) {
         return UNKNOWN_ERROR;
     }
 
-    return initialize(dir_path);
+    return 0; //initialize(dir_path);
 };
 
 

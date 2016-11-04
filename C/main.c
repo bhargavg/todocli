@@ -9,16 +9,42 @@
 #include "commands/cmd-tick.h"
 #include "commands/cmd-untick.h"
 #include "commands/cmd-rm.h"
+#include "argument-parser.h"
 
-char *dir_path  = "/tmp/ctodo/";
-char *file_path = "/tmp/ctodo/todo.bin";
-
-void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
 void die_if_error(int status);
-struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_commands, char *name);
-struct SubCommand get_sub_command(int argc, char *argv[], struct SubCommand registry[], size_t no_of_sub_commands, struct SubCommand default_sub_command);
+void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
+void get_arguments(struct Argument **arguments, int *count);
 
 int main(int argc, char *argv[]) {
+
+    int s_argc = 0;
+    char **s_argv = NULL;
+    char *sub_command_name = NULL;
+
+    get_sub_command_args(argc, argv, &sub_command_name, &s_argc, &s_argv);
+
+    struct Argument *all_arguments = NULL;
+    int arguments_count = 0;
+    get_arguments(&all_arguments, &arguments_count);
+
+    struct Options *options = options_new();
+    process_args(s_argc, s_argv, all_arguments, arguments_count, options);
+
+    printf("Subcommand: %s\n", sub_command_name);
+    print_options(*options);
+
+
+
+    /*
+    struct SubCommand default_subcommand = list_subcommand;
+
+    char *subcommand_name = (argc > 1) ? argv[1] : default_subcommand.name;
+    char *sub_command_name;
+    char **subcommand_argv;
+    int subcommand_argc = 0;
+
+    extract_sub_command_info(argc, argv, &sub_command_name, &s_argc, &s_argv);
+
     struct SubCommand registry[] = {
         init_subcommand,
         list_subcommand,
@@ -28,12 +54,25 @@ int main(int argc, char *argv[]) {
         rm_subcommand,
     };
 
-    size_t no_of_sub_commands = 6;
+    int no_of_sub_commands = 6;
 
-    char *sub_command_args[abs(argc - 2)];
-    for (int i = 2; i < argc; i++) {
-        sub_command_args[i - 2] = argv[i];
-    }
+    int s_argc = 0;
+    char *s_argv[argc];
+
+
+
+    struct SubCommand sub_command_to_run = get_sub_command(argc, argv, registry, no_of_sub_commands, list_subcommand);
+
+    struct Context *context = malloc(sizeof(struct Context));
+    memset(base_options, NULL, sizeof(struct Context));
+
+    struct Argument change_directory = {
+                                         .long_name  = "--dir",
+                                         .short_name = "-d",
+                                         .type = KEY_VALUE,
+                                         .value_processor = extract_todo_dir,
+                                         .is_valid = NULL
+                                       };
 
 
     struct SubCommand sub_command_to_run = get_sub_command(argc, argv, registry, no_of_sub_commands, list_subcommand);
@@ -57,32 +96,11 @@ int main(int argc, char *argv[]) {
     } else {
         usage(registry, no_of_sub_commands);
     }
+    */
 
     return 0;
 }
 
-struct SubCommand get_sub_command(int argc, char *argv[], struct SubCommand registry[], size_t no_of_sub_commands, struct SubCommand default_sub_command) {
-    if (argc > 1) {
-        char *sub_command_name = argv[1];
-        return find_sub_command_with_name(registry, no_of_sub_commands, sub_command_name);
-    }
-
-    return default_sub_command;
-}
-
-struct SubCommand find_sub_command_with_name(struct SubCommand registry[], size_t no_of_sub_commands, char *name) {
-    struct SubCommand command = {0};
-
-    for (int i=0; i < no_of_sub_commands; i++) {
-        struct SubCommand sub_command = registry[i];
-        if (strcmp(sub_command.name, name) == 0) {
-            command = sub_command;
-            break;
-        }
-    }
-
-    return command;
-}
 
 void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path) {
     FILE *fp = fopen(file_path, "wb");
@@ -98,3 +116,34 @@ void die_if_error(int status) {
     }
 }
 
+void get_arguments(struct Argument **arguments, int *count) {
+    int args_count = 4;
+    struct Argument *args = malloc(args_count * sizeof(struct Argument));
+
+    args[0].long_name  = strdup("--all");
+    args[0].short_name = strdup("-a");
+    args[0].is_flag    = true;
+    args[0].parser     = set_all_option;
+    args[0].is_valid   = NULL;
+
+    args[1].long_name  = strdup("--completed");
+    args[1].short_name = strdup("-c");
+    args[1].is_flag    = true;
+    args[1].parser     = set_completed_option;
+    args[1].is_valid   = NULL;
+
+    args[2].long_name  = strdup("--pending");
+    args[2].short_name = strdup("-p");
+    args[2].is_flag    = true;
+    args[2].parser     = set_pending_option;
+    args[2].is_valid   = NULL;
+
+    args[3].long_name  = strdup("--dir");
+    args[3].short_name = strdup("-d");
+    args[3].is_flag    = false;
+    args[3].parser     = set_base_directory_option;
+    args[3].is_valid = NULL;
+
+    *arguments = args;
+    *count = args_count;
+}

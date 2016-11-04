@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+struct Options {
+    char *dir_path;
+    char *file_path;
+
+    bool all;
+    bool pending;
+    bool completed;
+
+    char **values;
+    int values_count;
+};
+
+typedef int (*ArgumentParser) (char *value, struct Options *);
+
+struct Argument {
+    char *long_name;
+    char *short_name;
+
+    bool is_flag;
+
+    ArgumentParser parser;
+    bool (*is_valid)(char *);
+};
+
+struct SubCommand {
+    char *name;
+    int (*run)(struct Options *options);
+};
+
+
+int set_base_directory_option(char *value, struct Options *options) {
+    options->dir_path = strdup(value);
+    options->file_path = malloc(strlen(value) + strlen("/todo.bin") + 1);
+    strcpy(options->file_path, value);
+    strcat(options->file_path, "/todo.bin");
+    return 0;
+}
+
+int set_all_option(char *value, struct Options *options) {
+    options->all = true;
+    return 0;
+}
+
+int set_completed_option(char *value, struct Options *options) {
+    options->completed = true;
+    return 0;
+}
+
+int set_pending_option(char *value, struct Options *options) {
+    options->pending = true;
+    return 0;
+}
+
+bool has_prefix(char *, char *);
+void print_options(struct Options *options);
+
+int main(int argc, char *argv[]) {
+
+    struct Argument arg_all = {
+                                .long_name = "--all",
+                                .short_name = "-a",
+                                .is_flag = true,
+                                .parser = set_all_option,
+                                .is_valid = NULL
+                              };
+
+    struct Argument arg_completed = {
+                                      .long_name = "--completed",
+                                      .short_name = "-c",
+                                      .is_flag = true,
+                                      .parser = set_completed_option,
+                                      .is_valid = NULL
+                                    };
+
+    struct Argument arg_pending = {
+                                     .long_name = "--pending",
+                                     .short_name = "-p",
+                                     .is_flag = true,
+                                     .parser = set_pending_option,
+                                     .is_valid = NULL
+                                   };
+
+    struct Argument arg_dir = {
+                                .long_name = "--dir",
+                                .short_name = "-d",
+                                .is_flag = false,
+                                .parser = set_base_directory_option,
+                                .is_valid = NULL
+                              };
+
+    struct Argument args[] = { arg_all, arg_completed, arg_pending, arg_dir };
+    int args_count = 4;
+
+    struct Options *options = options_new(argc);
+
+    for (int i = 1; i < argc; i++) {
+        char *arg_key = argv[i];
+
+        if (has_prefix("--", arg_key)
+            || has_prefix("-", arg_key)) {
+            for (int j = 0; j < args_count; j++) {
+                struct Argument arg = args[j];
+
+                if (strcmp(arg_key, arg.long_name) == 0
+                    || strcmp(arg_key, arg.short_name) == 0) {
+
+                    if (arg.is_flag) {
+                        arg.parser(NULL, options);
+                    } else {
+                        i++;
+                        if (i < args_count) {
+                            char *arg_value = argv[i];
+                            arg.parser(arg_value, options);
+                        } else {
+                            printf("Value not found for %s", arg_key);
+                        }
+                    }
+
+                    continue;
+                }
+            }
+        } else {
+            options->values[options->values_count++] = strdup(arg_key);
+        }
+    }
+
+    print_options(options);
+
+    return 0;
+}
+
+bool has_prefix(char *pre, char *str) {
+    return strncmp(pre, str, strlen(pre)) == 0;
+}
+
+void print_options(struct Options *options) {
+    printf("Options: \n");
+    printf("  dir_path: %s\n", options->dir_path);
+    printf("  file_path: %s\n", options->file_path);
+    printf("  all: %s\n", options->all ? "✔" : "✘");
+    printf("  pending: %s\n", options->pending ? "✔" : "✘");
+    printf("  completed: %s\n", options->completed ? "✔" : "✘");
+    printf("  values: ");
+
+    for (int i = 0; i < options->values_count; i++) {
+        printf("%s%s", options->values[i], (i == options->values_count - 1) ? "\n" : ", ");
+    }
+}
