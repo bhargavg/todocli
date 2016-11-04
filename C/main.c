@@ -31,10 +31,6 @@ int main(int argc, char *argv[]) {
     struct Options *options = options_new();
     process_args(s_argc, s_argv, all_arguments, arguments_count, options);
 
-    printf("Subcommand: %s\n", sub_command_name);
-    print_options(*options);
-
-
     struct SubCommand registry[] = {
         init_subcommand,
         list_subcommand,

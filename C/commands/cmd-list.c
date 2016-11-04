@@ -14,9 +14,6 @@ void print_item(struct TodoItem item);
 void print_summary(struct TodoListMetadata metadata);
 
 int run_list(struct Options *options, struct TodoListMetadata *metadata) {
-
-    printf("Version: %lu, items count: %lu\n", metadata->version, metadata->items_count);
-
     if (options->pending) {
         print_items_with_status(*metadata, NOT_COMPLETED);
     } else if (options->completed) {
