@@ -46,3 +46,7 @@ void die(int status, char *message) {
     perror(buffer);
     exit(status);
 }
+
+bool is_param(char *str) {
+    return has_prefix(str, "--") || has_prefix(str, "-");
+}

@@ -17,19 +17,9 @@ void flush_items_to_disk(struct TodoListMetadata *metadata, char *file_path);
 void get_arguments(struct Argument **arguments, int *count);
 
 int main(int argc, char *argv[]) {
-
-    int s_argc = 0;
-    char **s_argv = NULL;
-    char *sub_command_name = NULL;
-
-    get_sub_command_args(argc, argv, &sub_command_name, &s_argc, &s_argv);
-
     struct Argument *all_arguments = NULL;
     int arguments_count = 0;
     get_arguments(&all_arguments, &arguments_count);
-
-    struct Options *options = options_new();
-    process_args(s_argc, s_argv, all_arguments, arguments_count, options);
 
     struct SubCommand registry[] = {
         init_subcommand,
@@ -42,20 +32,35 @@ int main(int argc, char *argv[]) {
 
     int no_of_sub_commands = 6;
 
-    struct SubCommand command_to_run = list_subcommand;
+    const struct SubCommand *command_to_run = &list_subcommand;
+    bool sub_command_specified = false;
 
-    if (sub_command_name) {
+    char *sub_command_name = list_subcommand.name;
+    if (argc > 1 && !is_param(argv[1])) {
+        sub_command_name = argv[1];
+        sub_command_specified = true;
+        command_to_run = NULL;
         for (int i = 0; i < no_of_sub_commands; i++) {
             struct SubCommand sub_command = registry[i];
             if (strcmp(sub_command_name, sub_command.name) == 0) {
-                command_to_run = sub_command;
+                command_to_run = &sub_command;
                 break;
             }
         }
+    } 
+
+    if (sub_command_specified && (command_to_run == NULL)) {
+        printf("error: unknown subcommand - %s\n\n", sub_command_name);
+        usage(registry, no_of_sub_commands);
+        exit(1);
     }
 
+    struct Options *options = options_new();
+    int sub_command_arg_start_index = sub_command_specified ? 2 : 1;
+    process_args(sub_command_arg_start_index, argc, argv, all_arguments, arguments_count, options);
+
     if (!is_initialized(options->dir_path)) {
-        if (strcmp(command_to_run.name, init_subcommand.name) == 0) {
+        if (strcmp(command_to_run->name, init_subcommand.name) == 0) {
             return init_subcommand.run(options, NULL);
         } else {
             printf("Not initialized. Please initialize todo with \"todo init\"\n");
@@ -66,13 +71,9 @@ int main(int argc, char *argv[]) {
     struct TodoListMetadata *metadata;
     die_if_error(load_metadata(options->dir_path, &metadata));
 
-    if (command_to_run.name) {
-        command_to_run.run(options, metadata);
-        flush_items_to_disk(metadata, options->file_path);
-        free_todo_metadata(metadata);
-    } else {
-        usage(registry, no_of_sub_commands);
-    }
+    command_to_run->run(options, metadata);
+    flush_items_to_disk(metadata, options->file_path);
+    free_todo_metadata(metadata);
 
     return 0;
 }

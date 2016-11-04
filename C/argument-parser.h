@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "commands-registry.h"
 
 struct Options {
     char *dir_path;
@@ -37,6 +36,6 @@ int set_completed_option(char *value, struct Options *options);
 int set_pending_option(char *value, struct Options *options);
 int set_summary_option(char *value, struct Options *options);
 
-void process_args(int argc, char *argv[], struct Argument args[], int args_count, struct Options *options);
+void process_args(int start_index, int argc, char *argv[], struct Argument args[], int args_count, struct Options *options);
 
 #endif

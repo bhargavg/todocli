@@ -64,11 +64,11 @@ void free_options(struct Options *options) {
     free(options);
 }
 
-void process_args(int argc, char *argv[], struct Argument args[], int args_count, struct Options *options) {
-    for (int i = 0; i < argc; i++) {
+void process_args(int start_index, int argc, char *argv[], struct Argument args[], int args_count, struct Options *options) {
+    for (int i = start_index; i < argc; i++) {
         char *arg_key = argv[i];
 
-        if (has_prefix(arg_key, "--") || has_prefix(arg_key, "-")) {
+        if (is_param(arg_key)) {
             for (int j = 0; j < args_count; j++) {
                 struct Argument arg = args[j];
 

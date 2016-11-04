@@ -19,5 +19,6 @@ void die(int status, char *message);
 int sanitized_index_arg_value(char *arg, unsigned long int *index);
 
 bool has_prefix(const char *str, const char *pre);
+bool is_param(char *);
 
 #endif
