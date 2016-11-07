@@ -1,6 +1,8 @@
 #ifndef _OPTIONS_H__
 #define _OPTIONS_H__
 
+#include <stdbool.h>
+
 struct Options {
     char *dir_path;
     char *file_path;

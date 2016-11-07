@@ -1,4 +1,8 @@
 #include "options.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "common.h"
 
 #define MAX_VALUES_COUNT 100
 extern const char *todo_file_name;
