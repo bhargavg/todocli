@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     const struct SubCommand *command_to_run = &list_subcommand;
     bool sub_command_specified = false;
 
-    char *sub_command_name = list_subcommand.name;
+    const char *sub_command_name = list_subcommand.name;
     if (argc > 1 && !is_param(argv[1])) {
         sub_command_name = argv[1];
         sub_command_specified = true;
@@ -57,7 +57,17 @@ int main(int argc, char *argv[]) {
 
     struct Options *options = options_new();
     int sub_command_arg_start_index = sub_command_specified ? 2 : 1;
-    process_args(sub_command_arg_start_index, argc, argv, all_arguments, arguments_count, options);
+    char *invalid_argument = NULL;
+
+    int ret = process_args(sub_command_arg_start_index, argc, argv, all_arguments, arguments_count, options, &invalid_argument);
+    
+    if (ret == INVALID_ARGUMENT) {
+        fprintf(stderr, "error: Invalid argument -- %s\n", invalid_argument);
+        return 1;
+    } else if (ret == VALUE_NOT_FOUND) {
+        fprintf(stderr, "error: Argument expects a value -- %s\n", invalid_argument);
+        return 1;
+    }
 
     if (!is_initialized(options->dir_path)) {
         if (strcmp(command_to_run->name, init_subcommand.name) == 0) {

@@ -11,6 +11,8 @@ void usage(const struct SubCommand registry[], int no_of_commands) {
 
     for (int i=0; i < no_of_commands; i++) {
         struct SubCommand sub_command = registry[i];
-        fprintf(fp, "  %s: %s\n", sub_command.name, sub_command.description);
+        fprintf(fp, "  %s  ", sub_command.name);
     }
+
+    fprintf(fp, "\n\n`todo help [SUB_COMMAND]` to get about a specific sub command\n");
 }

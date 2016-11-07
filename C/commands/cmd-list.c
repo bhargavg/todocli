@@ -6,8 +6,6 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-void print_list_help(FILE *fp);
-
 void print_all(struct TodoListMetadata metadata);
 void print_items_with_status(struct TodoListMetadata metadata, enum ItemStatus status);
 void print_item(struct TodoItem item);
@@ -67,13 +65,10 @@ void print_item(struct TodoItem item) {
 
 const struct SubCommand list_subcommand = {
     .name = "list",
-    .description = "Print all the todo items",
     .run = run_list,
-    .help_printer = print_list_help
+    .help_text = "      Usage: todo list [--summary] [--pending] [--completed]\n"
+                 "Description: Print the todo items\n"
+                 "    Options: \n"
+                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
+                 "    Example: todo list --summary"
 };
-
-void print_list_help(FILE *fp) {
-    fprintf(fp, "Usage: todo list\n\n");
-    fprintf(fp, "Description: %s\n", list_subcommand.description);
-}
-

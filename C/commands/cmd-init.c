@@ -8,12 +8,10 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-void print_init_help(FILE *);
-
 int run_init(struct Options *options, struct TodoListMetadata *metadata) {
     if (options->values_count > 0) {
-        printf("\"init\" doesnot take any parameters\n");
-        print_init_help(stdout);
+        //FIXME: handle this in is_init_args_valid
+        //printf("\"init\" doesnot take any parameters\n");
         return UNKNOWN_ERROR;
     }
 
@@ -23,12 +21,10 @@ int run_init(struct Options *options, struct TodoListMetadata *metadata) {
 
 const struct SubCommand init_subcommand = {
     .name = "init",
-    .description = "initialize todo",
     .run = run_init,
-    .help_printer = print_init_help
+    .help_text = "      Usage: todo init [--dir DIRECTORY_PATH]\n"
+                 "Description: Initialize todo\n"
+                 "    Options: \n"
+                 "      -d, --dir   Path to directory in which todo should be initialized\n\n"
+                 "    Example: todo init --dir /Users/foo/Desktop/mytodolists/"
 };
-
-void print_init_help(FILE *fp) {
-    fprintf(fp, "Usage: todo init\n\n");
-    fprintf(fp, "Description: %s\n", init_subcommand.description);
-}

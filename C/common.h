@@ -7,10 +7,15 @@
 #include "argument-parser.h"
 
 struct SubCommand {
-    char *name;
-    char *description;
+    const char *name;
     int (*run)(struct Options *options, struct TodoListMetadata *metadata);
-    void (*help_printer)(FILE *stream);
+    const char *help_text;
+};
+
+enum Errors {
+    NO_ERROR = 0,
+    INVALID_ARGUMENT,
+    VALUE_NOT_FOUND,
 };
 
 char *get_default_todo_directory();

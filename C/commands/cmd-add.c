@@ -6,12 +6,10 @@
 #include "../argument-parser.h"
 #include "libtodo.h"
 
-void print_add_help(FILE *);
-
 int run_add(struct Options *options, struct TodoListMetadata *metadata) {
     if (options->values_count != 1) {
-        printf("\"add\" takes only one argument, %d provided\n", options->values_count);
-        print_add_help(stdout);
+        //FIXME: handle this in is_add_ags_valid
+        // printf("\"add\" takes only one argument, %d provided\n", options->values_count);
         return UNKNOWN_ERROR;
     }
 
@@ -22,16 +20,17 @@ int run_add(struct Options *options, struct TodoListMetadata *metadata) {
     return add_item(item, metadata);
 }
 
-void print_add_help(FILE *fp) {
-    fprintf(fp, "Usage: todo add TODO_TEXT\n\n");
-    fprintf(fp, "Description: %s\n", add_subcommand.description);
-    fprintf(fp, "Example: todo add \"Make Todo great again\"\n");
+bool is_add_args_valid(char **message) {
+    return true;
 }
 
 const struct SubCommand add_subcommand = {
     .name = "add",
-    .description = "Add a given item to the todo list",
     .run = run_add,
-    .help_printer = print_add_help
+    .help_text = "      Usage: todo add TODO_TEXT\n"
+                 "Description: Add a given item to todo list\n"
+                 "    Options: \n"
+                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
+                 "    Example: todo add \"Make Todos great again!\"\n"
 };
 

@@ -6,19 +6,17 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-void print_tick_help(FILE *);
-
 int run_tick(struct Options *options, struct TodoListMetadata *metadata) {
     if (options->values_count != 1) {
-        printf("\"tick\" takes only one argument, %d provided\n", options->values_count);
-        print_tick_help(stdout);
+        //FIXME: handle this in is_tick_args_valid
+        // printf("\"tick\" takes only one argument, %d provided\n", options->values_count);
         return UNKNOWN_ERROR;
     }
 
     unsigned long int identifier = 0;
     if (sanitized_index_arg_value(options->values[0], &identifier) == UNKNOWN_ERROR) {
-        printf("error: invalid argument");
-        print_tick_help(stdout);
+        //FIXME: handle this in is_tick_args_valid
+        //printf("error: invalid argument");
         return UNKNOWN_ERROR;
     }
 
@@ -31,16 +29,13 @@ int run_tick(struct Options *options, struct TodoListMetadata *metadata) {
     return TODO_ITEM_NOT_FOUND;
 };
 
-void print_tick_help(FILE *fp) {
-    fprintf(fp, "Usage: todo tick ITEM_ID\n\n");
-    fprintf(fp, "Description: %s\n", tick_subcommand.description);
-    fprintf(fp, "Example: todo tick 2\n");
-}
-
 const struct SubCommand tick_subcommand = {
     .name = "tick",
-    .description = "tick an item as done",
     .run = run_tick,
-    .help_printer = print_tick_help
+    .help_text = "      Usage: todo tick ITEM_ID\n"
+                 "Description: Mark item with specified id as completed\n"
+                 "    Options: \n"
+                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
+                 "    Example: todo tick 2\n"
 };
 
