@@ -11,7 +11,6 @@ struct Argument {
     char *short_name;
     bool is_flag;
     int (*parser) (char *value, struct Options *);
-    bool (*is_valid)(char **message);
 };
 
 int process_args(int start_index, int argc, char *argv[], struct Argument args[], int args_count, struct Options *options, char **invalid_argument);

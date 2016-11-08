@@ -6,26 +6,31 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-void print_all(struct TodoListMetadata metadata);
-void print_items_with_status(struct TodoListMetadata metadata, enum ItemStatus status);
-void print_item(struct TodoItem item);
-void print_summary(struct TodoListMetadata metadata);
+char *all_items_as_string(struct TodoListMetadata metadata);
+char *items_with_status_as_string(struct TodoListMetadata metadata, enum ItemStatus status);
+char *item_as_string(struct TodoItem item);
+char *summary(struct TodoListMetadata metadata);
 
-int run_list(struct Options *options, struct TodoListMetadata *metadata) {
-    if (options->pending) {
-        print_items_with_status(*metadata, NOT_COMPLETED);
-    } else if (options->completed) {
-        print_items_with_status(*metadata, COMPLETED);
-    } else if (options->summary) {
-        print_summary(*metadata);
+struct SubCommandExecResult *run_list(struct Options *options, struct TodoListMetadata *metadata) {
+    struct SubCommandExecResult *result = exec_result_new();
+
+    if (options->flags == OPTIONS_FLAG_PENDING) {
+        result->message = items_with_status_as_string(*metadata, NOT_COMPLETED);
+    } else if (options->flags == OPTIONS_FLAG_COMPLETED) {
+        result->message = items_with_status_as_string(*metadata, COMPLETED);
+    } else if (options->flags == OPTIONS_FLAG_SUMMARY) {
+        result->message = summary(*metadata);
+    } else if (options->flags == OPTIONS_FLAG_ALL || options->flags == OPTIONS_FLAG_UNSPECIFIED) {
+        result->message = all_items_as_string(*metadata);
     } else {
-        print_all(*metadata);
+        result->status = MULTIPLE_FLAGS;
+        result->message = strdup("multiple flags specified");
     }
 
-    return EXECUTION_SUCCESS;
+    return result;
 };
 
-void print_summary(struct TodoListMetadata metadata) {
+char *summary(struct TodoListMetadata metadata) {
     unsigned long int pending_items_count = 0, completed_items_count = 0;
     for (unsigned long int i = 0; i < metadata.items_count; i++) {
         struct TodoItem *item = metadata.items[i];
@@ -36,43 +41,54 @@ void print_summary(struct TodoListMetadata metadata) {
         }
     }
 
-    printf("You have %lu pending item(s) and completed %lu item(s)\n", pending_items_count, completed_items_count);
+    char *message = NULL;
+    asprintf(&message, "You have %lu pending item(s) and completed %lu item(s)\n", pending_items_count, completed_items_count);
+
+    return message;
 }
 
-void print_all(struct TodoListMetadata metadata) {
+char *all_items_as_string(struct TodoListMetadata metadata) {
     bool printed_any = false;
+    char *message = NULL;
     for (unsigned long int i = 0; i < metadata.items_count; i++) {
         struct TodoItem *item = metadata.items[i];
-        print_item(*item);
-        printf("\n");
+        asprintf(&message, "%s%s\n", (message) ?: "", item_as_string(*item));
         printed_any = true;
     }
 
     if (!printed_any) {
-        printf("You have 0 items\n");
+        asprintf(&message, "You have 0 items\n");
     }
+
+    return message;
 }
 
-void print_items_with_status(struct TodoListMetadata metadata, enum ItemStatus status) {
+char *items_with_status_as_string(struct TodoListMetadata metadata, enum ItemStatus status) {
     bool printed_any = false;
+    char *message = NULL;
     for (unsigned long int i = 0; i < metadata.items_count; i++) {
         struct TodoItem *item = metadata.items[i];
 
         if (item->status == status) {
-            print_item(*item);
-            printf("\n");
+            asprintf(&message, "%s%s\n", (message) ?: "", item_as_string(*item));
             printed_any = true;
         }
     }
 
     if (!printed_any) {
-        printf("You have 0 %s items\n", (status == COMPLETED) ? "completed" : "pending");
+        asprintf(&message, "You have 0 %s items\n", (status == COMPLETED) ? "completed" : "pending");
     }
+
+    return message;
 }
 
-void print_item(struct TodoItem item) {
+char *item_as_string(struct TodoItem item) {
     char *status = (item.status == COMPLETED) ? "✔" : ((item.status == REMOVED) ? "✘" : " ");
-    printf("%s %lu: %s", status, item.identifier, item.text);
+
+    char *message = NULL;
+    asprintf(&message, "%s %lu: %s", status, item.identifier, item.text);
+
+    return message;
 }
 
 

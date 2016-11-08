@@ -8,15 +8,24 @@
 
 struct SubCommand {
     const char *name;
-    int (*run)(struct Options *options, struct TodoListMetadata *metadata);
+    struct SubCommandExecResult *(*run)(struct Options *, struct TodoListMetadata *);
     const char *help_text;
+};
+
+struct SubCommandExecResult {
+    int status;
+    char *message;
 };
 
 enum Errors {
     NO_ERROR = 0,
     INVALID_ARGUMENT,
-    VALUE_NOT_FOUND,
+    ARG_VALUE_NOT_FOUND,
+    MULTIPLE_FLAGS,
 };
+
+struct SubCommandExecResult *exec_result_new();
+void free_exec_result(struct SubCommandExecResult *);
 
 char *get_default_todo_directory();
 void die(int status, char *message);

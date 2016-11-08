@@ -64,12 +64,13 @@ int main(int argc, char *argv[]) {
     if (ret == INVALID_ARGUMENT) {
         fprintf(stderr, "error: Invalid argument -- %s\n", invalid_argument);
         return 1;
-    } else if (ret == VALUE_NOT_FOUND) {
+    } else if (ret == ARG_VALUE_NOT_FOUND) {
         fprintf(stderr, "error: Argument expects a value -- %s\n", invalid_argument);
         return 1;
     }
 
-    if (options->help) {
+
+    if (IS_FLAG_SET((*options), OPTIONS_FLAG_HELP)) {
         if (sub_command_specified) {
             printf("\n%s", command_to_run->help_text);
         } else {
@@ -80,7 +81,7 @@ int main(int argc, char *argv[]) {
 
     if (!is_initialized(options->dir_path)) {
         if (strcmp(command_to_run->name, init_subcommand.name) == 0) {
-            return init_subcommand.run(options, NULL);
+            return init_subcommand.run(options, NULL)->status;
         } else {
             printf("Not initialized. Please initialize todo with \"todo init\"\n");
             return NOT_INITIALIZED;
@@ -90,9 +91,17 @@ int main(int argc, char *argv[]) {
     struct TodoListMetadata *metadata;
     die_if_error(load_metadata(options->dir_path, &metadata));
 
-    command_to_run->run(options, metadata);
-    flush_items_to_disk(metadata, options->file_path);
+    struct SubCommandExecResult *result = command_to_run->run(options, metadata);
+
+    if (result->status == NO_ERROR) {
+        flush_items_to_disk(metadata, options->file_path);
+        printf("%s\n", result->message);
+    } else {
+        printf("error: %s\n", result->message);
+    }
+
     free_todo_metadata(metadata);
+    free_exec_result(result);
 
     return 0;
 }
@@ -120,37 +129,31 @@ void get_arguments(struct Argument **arguments, int *count) {
     args[0].short_name = strdup("-a");
     args[0].is_flag    = true;
     args[0].parser     = set_all_option;
-    args[0].is_valid   = NULL;
 
     args[1].long_name  = strdup("--completed");
     args[1].short_name = strdup("-c");
     args[1].is_flag    = true;
     args[1].parser     = set_completed_option;
-    args[1].is_valid   = NULL;
 
     args[2].long_name  = strdup("--pending");
     args[2].short_name = strdup("-p");
     args[2].is_flag    = true;
     args[2].parser     = set_pending_option;
-    args[2].is_valid   = NULL;
 
     args[3].long_name  = strdup("--summary");
     args[3].short_name = strdup("-s");
     args[3].is_flag    = true;
     args[3].parser     = set_summary_option;
-    args[3].is_valid   = NULL;
 
     args[4].long_name  = strdup("--dir");
     args[4].short_name = strdup("-d");
     args[4].is_flag    = false;
     args[4].parser     = set_base_directory_option;
-    args[4].is_valid   = NULL;
 
     args[5].long_name  = strdup("--help");
     args[5].short_name = strdup("-h");
     args[5].is_flag    = true;
     args[5].parser     = set_help_option;
-    args[5].is_valid   = NULL;
 
     *arguments = args;
     *count = args_count;

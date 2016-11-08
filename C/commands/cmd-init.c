@@ -8,14 +8,19 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-int run_init(struct Options *options, struct TodoListMetadata *metadata) {
+struct SubCommandExecResult *run_init(struct Options *options, struct TodoListMetadata *metadata) {
+
+    struct SubCommandExecResult *result = exec_result_new();
+
     if (options->values_count > 0) {
-        //FIXME: handle this in is_init_args_valid
-        //printf("\"init\" doesnot take any parameters\n");
-        return UNKNOWN_ERROR;
+        result->status = INVALID_ARGUMENT;
+        asprintf(&(result->message), "\"init\" takes 0 arguments, %d provided", options->values_count);
+        return result;
     }
 
-    return initialize(options->dir_path);
+    result->status = initialize(options->dir_path);
+    result->message = strdup("Initialized");
+    return result;
 };
 
 

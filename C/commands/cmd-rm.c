@@ -5,28 +5,34 @@
 #include "../common.h"
 #include "../argument-parser.h"
 
-int run_rm(struct Options *options, struct TodoListMetadata *metadata) {
+struct SubCommandExecResult *run_rm(struct Options *options, struct TodoListMetadata *metadata) {
+    struct SubCommandExecResult *result = exec_result_new();
+
     if (options->values_count != 1) {
-        //FIXME: handle this in is_rm_args_valid
-        //printf("\"rm\" takes only one argument, %d provided\n", options->values_count);
-        return UNKNOWN_ERROR;
+        result->status = INVALID_ARGUMENT;
+        asprintf(&(result->message), "\"rm\" takes only one argument, %d provided\n", options->values_count);
+        return result;
     }
 
     unsigned long int identifier = 0;
     if (sanitized_index_arg_value(options->values[0], &identifier) == UNKNOWN_ERROR) {
-        //FIXME: handle this in is_rm_args_valid
-        // printf("error: invalid argument");
-        //print_rm_help(stdout);
-        return UNKNOWN_ERROR;
+        result->status = INVALID_ARGUMENT;
+        result->message = strdup("invalid item id");
+        return result;
     }
 
     struct TodoItem *item = item_with_identifier(identifier, metadata);
     if (item) {
         item->status = REMOVED;
-        return EXECUTION_SUCCESS;
+
+        result->status = NO_ERROR;
+        result->message = NULL;
+    } else {
+        result->status = INVALID_ARGUMENT;
+        asprintf(&(result->message), "couldnot find item with identifier: %lu", identifier);
     }
 
-    return TODO_ITEM_NOT_FOUND;
+    return result;
 }
 
 const struct SubCommand rm_subcommand = {
@@ -40,5 +46,5 @@ const struct SubCommand rm_subcommand = {
                  "  -p, --pending\n"
                  "      Remove all pending items\n"
                  "  -c, --completed\n"
-                 "      Remove all completed items\n"
+                 "      Remove all completed items\n",
 };

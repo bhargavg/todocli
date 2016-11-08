@@ -33,7 +33,7 @@ int process_args(int start_index, int argc, char *argv[], struct Argument args[]
                             break;
                         } else {
                             // Cannot retrieve value for this argument
-                            error = VALUE_NOT_FOUND;
+                            error = ARG_VALUE_NOT_FOUND;
                         }
                     }
 

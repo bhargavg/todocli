@@ -16,27 +16,27 @@ int set_base_directory_option(char *value, struct Options *options) {
 }
 
 int set_all_option(char *value, struct Options *options) {
-    options->all = true;
+    SET_FLAG((*options), OPTIONS_FLAG_ALL);
     return 0;
 }
 
 int set_completed_option(char *value, struct Options *options) {
-    options->completed = true;
+    SET_FLAG((*options), OPTIONS_FLAG_COMPLETED);
     return 0;
 }
 
 int set_pending_option(char *value, struct Options *options) {
-    options->pending = true;
+    SET_FLAG((*options), OPTIONS_FLAG_PENDING);
     return 0;
 }
 
 int set_summary_option(char *value, struct Options *options) {
-    options->summary = true;
+    SET_FLAG((*options), OPTIONS_FLAG_SUMMARY);
     return 0;
 }
 
 int set_help_option(char *value, struct Options *options) {
-    options->help = true;
+    SET_FLAG((*options), OPTIONS_FLAG_HELP);
     return 0;
 }
 
@@ -48,9 +48,8 @@ struct Options *options_new() {
     strcpy(options->file_path, options->dir_path);
     strcat(options->file_path, todo_file_name);
 
-    options->all = false;
-    options->pending = false;
-    options->completed = false;
+    CLR_ALL_FLAGS((*options));
+
     options->values = malloc(sizeof(char *) * MAX_VALUES_COUNT);
     options->values_count = 0;
 
@@ -71,9 +70,11 @@ void print_options(struct Options options) {
     printf("Options: \n");
     printf("   dir_path: %s\n", options.dir_path);
     printf("  file_path: %s\n", options.file_path);
-    printf("        all: %s\n", options.all ? "✓" : "✘");
-    printf("  completed: %s\n", options.completed ? "✓" : "✘");
-    printf("    pending: %s\n", options.pending ? "✓" : "✘");
+    printf("        all: %s\n", IS_FLAG_SET(options, OPTIONS_FLAG_ALL) ? "✓" : "✘");
+    printf("  completed: %s\n", IS_FLAG_SET(options, OPTIONS_FLAG_COMPLETED) ? "✓" : "✘");
+    printf("    pending: %s\n", IS_FLAG_SET(options, OPTIONS_FLAG_PENDING) ? "✓" : "✘");
+    printf("    summary: %s\n", IS_FLAG_SET(options, OPTIONS_FLAG_SUMMARY) ? "✓" : "✘");
+    printf("       HELP: %s\n", IS_FLAG_SET(options, OPTIONS_FLAG_HELP) ? "✓" : "✘");
     printf("    values: ");
 
     for (int i = 0; i < options.values_count; i++) {

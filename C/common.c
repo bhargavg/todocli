@@ -50,3 +50,16 @@ void die(int status, char *message) {
 bool is_param(char *str) {
     return has_prefix(str, "--") || has_prefix(str, "-");
 }
+
+struct SubCommandExecResult *exec_result_new() {
+    struct SubCommandExecResult *result = malloc(sizeof(struct SubCommandExecResult));
+    result->status = NO_ERROR;
+    result->message = NULL;
+
+    return result;
+}
+
+void free_exec_result(struct SubCommandExecResult *result) {
+    free(result->message);
+    free(result);
+}
