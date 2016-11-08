@@ -146,11 +146,11 @@ void get_arguments(struct Argument **arguments, int *count) {
     args[4].parser     = set_base_directory_option;
     args[4].is_valid   = NULL;
 
-    args[4].long_name  = strdup("--help");
-    args[4].short_name = strdup("-h");
-    args[4].is_flag    = true;
-    args[4].parser     = set_help_option;
-    args[4].is_valid   = NULL;
+    args[5].long_name  = strdup("--help");
+    args[5].short_name = strdup("-h");
+    args[5].is_flag    = true;
+    args[5].parser     = set_help_option;
+    args[5].is_valid   = NULL;
 
     *arguments = args;
     *count = args_count;
