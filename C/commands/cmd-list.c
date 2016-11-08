@@ -40,20 +40,33 @@ void print_summary(struct TodoListMetadata metadata) {
 }
 
 void print_all(struct TodoListMetadata metadata) {
+    bool printed_any = false;
     for (unsigned long int i = 0; i < metadata.items_count; i++) {
         struct TodoItem *item = metadata.items[i];
         print_item(*item);
+        printf("\n");
+        printed_any = true;
+    }
+
+    if (!printed_any) {
+        printf("You have 0 items\n");
     }
 }
 
 void print_items_with_status(struct TodoListMetadata metadata, enum ItemStatus status) {
+    bool printed_any = false;
     for (unsigned long int i = 0; i < metadata.items_count; i++) {
         struct TodoItem *item = metadata.items[i];
 
         if (item->status == status) {
             print_item(*item);
             printf("\n");
+            printed_any = true;
         }
+    }
+
+    if (!printed_any) {
+        printf("You have 0 %s items\n", (status == COMPLETED) ? "completed" : "pending");
     }
 }
 
