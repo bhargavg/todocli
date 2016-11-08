@@ -69,6 +69,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (options->help) {
+        if (sub_command_specified) {
+            printf("\n%s", command_to_run->help_text);
+        } else {
+            usage(registry, no_of_sub_commands);
+        }
+        return EXECUTION_SUCCESS;
+    }
+
     if (!is_initialized(options->dir_path)) {
         if (strcmp(command_to_run->name, init_subcommand.name) == 0) {
             return init_subcommand.run(options, NULL);
@@ -104,7 +113,7 @@ void die_if_error(int status) {
 }
 
 void get_arguments(struct Argument **arguments, int *count) {
-    int args_count = 5;
+    int args_count = 6;
     struct Argument *args = malloc(args_count * sizeof(struct Argument));
 
     args[0].long_name  = strdup("--all");
@@ -135,7 +144,13 @@ void get_arguments(struct Argument **arguments, int *count) {
     args[4].short_name = strdup("-d");
     args[4].is_flag    = false;
     args[4].parser     = set_base_directory_option;
-    args[4].is_valid = NULL;
+    args[4].is_valid   = NULL;
+
+    args[4].long_name  = strdup("--help");
+    args[4].short_name = strdup("-h");
+    args[4].is_flag    = true;
+    args[4].parser     = set_help_option;
+    args[4].is_valid   = NULL;
 
     *arguments = args;
     *count = args_count;

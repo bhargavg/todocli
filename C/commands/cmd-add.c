@@ -27,10 +27,10 @@ bool is_add_args_valid(char **message) {
 const struct SubCommand add_subcommand = {
     .name = "add",
     .run = run_add,
-    .help_text = "      Usage: todo add TODO_TEXT\n"
-                 "Description: Add a given item to todo list\n"
-                 "    Options: \n"
-                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
-                 "    Example: todo add \"Make Todos great again!\"\n"
+    .help_text = "Add a given item to todo list\n\n"
+                 "Usage: todo add TODO_TEXT\n\n"
+                 "Options: \n"
+                 "  -d, --dir\n"
+                 "      Path to directory in which todo is initialized\n"
 };
 

@@ -32,10 +32,10 @@ int run_tick(struct Options *options, struct TodoListMetadata *metadata) {
 const struct SubCommand tick_subcommand = {
     .name = "tick",
     .run = run_tick,
-    .help_text = "      Usage: todo tick ITEM_ID\n"
-                 "Description: Mark item with specified id as completed\n"
-                 "    Options: \n"
-                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
-                 "    Example: todo tick 2\n"
+    .help_text = "Mark item with specified id as completed\n\n"
+                 "Usage: todo tick ITEM_ID\n\n"
+                 "Options: \n"
+                 "   -d, --dir\n"
+                 "       Path to directory in which todo is initialized\n"
 };
 

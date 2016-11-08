@@ -32,10 +32,10 @@ int run_untick(struct Options *options, struct TodoListMetadata *metadata) {
 const struct SubCommand untick_subcommand = {
     .name = "untick",
     .run = run_untick,
-    .help_text = "      Usage: todo untick ITEM_ID\n"
-                 "Description: Mark item with specified id as incomplete\n"
-                 "    Options: \n"
-                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
-                 "    Example: todo untick 2\n"
+    .help_text = "Mark item with specified id as incomplete\n\n"
+                 "Usage: todo untick ITEM_ID\n\n"
+                 "Options: \n"
+                 "  -d, --dir\n"
+                 "      Path to directory in which todo is initialized\n"
 };
 

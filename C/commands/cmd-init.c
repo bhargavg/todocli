@@ -22,9 +22,9 @@ int run_init(struct Options *options, struct TodoListMetadata *metadata) {
 const struct SubCommand init_subcommand = {
     .name = "init",
     .run = run_init,
-    .help_text = "      Usage: todo init [--dir DIRECTORY_PATH]\n"
-                 "Description: Initialize todo\n"
-                 "    Options: \n"
-                 "      -d, --dir   Path to directory in which todo should be initialized\n\n"
-                 "    Example: todo init --dir /Users/foo/Desktop/mytodolists/"
+    .help_text = "Initialize todo\n\n"
+                 "Usage: todo init [--dir DIRECTORY_PATH]\n\n"
+                 "Options: \n"
+                 "  -d, --dir\n"
+                 "      Path to directory in which todo should be initialized\n"
 };

@@ -14,5 +14,5 @@ void usage(const struct SubCommand registry[], int no_of_commands) {
         fprintf(fp, "  %s  ", sub_command.name);
     }
 
-    fprintf(fp, "\n\n`todo help [SUB_COMMAND]` to get about a specific sub command\n");
+    fprintf(fp, "\n\n`todo [SUB_COMMAND] [-h|--help]` to get about a specific sub command\n");
 }

@@ -11,6 +11,7 @@ struct Options {
     bool pending;
     bool completed;
     bool summary;
+    bool help;
 
     char **values;
     int values_count;
@@ -25,5 +26,6 @@ int set_all_option(char *value, struct Options *options);
 int set_completed_option(char *value, struct Options *options);
 int set_pending_option(char *value, struct Options *options);
 int set_summary_option(char *value, struct Options *options);
+int set_help_option(char *value, struct Options *options);
 
 #endif

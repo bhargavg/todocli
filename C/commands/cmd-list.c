@@ -66,9 +66,9 @@ void print_item(struct TodoItem item) {
 const struct SubCommand list_subcommand = {
     .name = "list",
     .run = run_list,
-    .help_text = "      Usage: todo list [--summary] [--pending] [--completed]\n"
-                 "Description: Print the todo items\n"
-                 "    Options: \n"
-                 "      -d, --dir   Path to directory in which todo is initialized\n\n"
-                 "    Example: todo list --summary"
+    .help_text = "Print the todo items\n\n"
+                 "Usage: todo list [--summary] [--pending] [--completed]\n\n"
+                 "Options: \n"
+                 "  -d, --dir\n"
+                 "      Path to directory in which todo is initialized\n"
 };

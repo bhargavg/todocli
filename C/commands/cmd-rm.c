@@ -32,11 +32,13 @@ int run_rm(struct Options *options, struct TodoListMetadata *metadata) {
 const struct SubCommand rm_subcommand = {
     .name = "rm",
     .run = run_rm,
-    .help_text = "      Usage: todo rm [ITEM_ID] [--pending] [--completed] [--dir DIRECTORY_PATH]\n"
-                 "Description: Remove the specified todo item(s)\n"
-                 "    Options: \n"
-                 "      -d, --dir         Path to directory in which todo is initialized\n"
-                 "      -p, --pending     Remove all pending items\n"
-                 "      -c, --completed   Remove all completed items\n\n"
-                 "    Example: todo rm --completed"
+    .help_text = "Remove the specified todo item(s)\n\n"
+                 "Usage: todo rm [ITEM_ID] [--pending] [--completed] [--dir DIRECTORY_PATH]\n\n"
+                 "Options: \n"
+                 "  -d, --dir\n"
+                 "      Path to directory in which todo is initialized\n"
+                 "  -p, --pending\n"
+                 "      Remove all pending items\n"
+                 "  -c, --completed\n"
+                 "      Remove all completed items\n"
 };
