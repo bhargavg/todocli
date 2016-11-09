@@ -100,4 +100,10 @@ const struct SubCommand list_subcommand = {
                  "Options: \n"
                  "  -d, --dir\n"
                  "      Path to directory in which todo is initialized\n"
+                 "  -p, --pending\n"
+                 "      List all pending items\n"
+                 "  -c, --completed\n"
+                 "      List all completed items\n"
+                 "  -s, --summary\n"
+                 "      Print one line summary of completed/pending items\n",
 };
