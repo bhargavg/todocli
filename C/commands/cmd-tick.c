@@ -25,13 +25,19 @@ struct SubCommandExecResult *run_tick(struct Options *options, struct TodoListMe
 
     struct TodoItem *item = item_with_identifier(identifier, metadata);
     if (item) {
-        item->status = COMPLETED;
+        if (item->status == COMPLETED) { 
+            result->status = INVALID_ARGUMENT;
+            result->message = strdup("Item already completed!");
+        } else {
+            item->status = COMPLETED;
 
-        result->status = NO_ERROR;
-        result->message = NULL;
+            result->status = NO_ERROR;
+            result->message = strdup("Good job, item marked as completed");
+        }
+
     } else {
         result->status = INVALID_ARGUMENT;
-        asprintf(&(result->message), "couldnot find item with identifier: %lu", identifier);
+        asprintf(&(result->message), "Couldnot find item with identifier: %lu", identifier);
     }
 
     return result;

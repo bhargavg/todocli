@@ -24,13 +24,19 @@ struct SubCommandExecResult *run_untick(struct Options *options, struct TodoList
 
     struct TodoItem *item = item_with_identifier(identifier, metadata);
     if (item) {
-        item->status = NOT_COMPLETED;
+        if (item->status == NOT_COMPLETED) { 
+            result->status = INVALID_ARGUMENT;
+            result->message = strdup("Item is not yet marked as completed!");
+        } else {
+            item->status = NOT_COMPLETED;
 
-        result->status = NO_ERROR;
-        result->message = NULL;
+            result->status = NO_ERROR;
+            result->message = strdup("Get back to work, this item is marked as incomplete");
+        }
+
     } else {
         result->status = INVALID_ARGUMENT;
-        asprintf(&(result->message), "couldnot find item with identifier: %lu", identifier);
+        asprintf(&(result->message), "Couldnot find item with identifier: %lu", identifier);
     }
 
     return result;
