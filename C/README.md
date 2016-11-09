@@ -26,3 +26,12 @@ $
 $ # Delete the item with id 1
 $ todo rm 1 # [--all] [--pending] [--completed]
 ```
+
+## Installation
+```bash
+$ git clone https://github.com/bhargavg/todocli
+$
+$ cd C/
+$
+$ make install
+```

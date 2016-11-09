@@ -29,3 +29,6 @@ $ todo rm 1 # [--all] [--pending] [--completed]
 
 ## TODO
 - [ ] Document about the `todo.bin` file format
+- [ ] Languages
+  - [x] C
+  - [ ] Swift
