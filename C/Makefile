@@ -18,6 +18,8 @@ CFLAGS  += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 
+INSTALL_DIR = /usr/local/bin/
+
 .PHONY: all clean distclean 
 
 all: $(program_NAME)
@@ -33,8 +35,13 @@ clean:
 	@- $(RM) $(test_OBJS)
 	@- cd libs/libtodo; make clean
 
-distclean: clean
+install: all
+	cp -f $(program_NAME) $(INSTALL_DIR)
 
+uninstall:
+	rm $(INSTALL_DIR)$(program_NAME)
+
+distclean: clean
 
 test: $(test_NAME)
 	./$<
