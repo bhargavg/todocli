@@ -20,7 +20,7 @@ LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 
 INSTALL_DIR = /usr/local/bin/
 
-.PHONY: all clean distclean 
+.PHONY: all clean distclean uninstall test
 
 all: $(program_NAME)
 
