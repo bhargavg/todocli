@@ -1,5 +1,5 @@
 # A todo list manager in C
-Maintains the list of todo items in `~/.todo/todo.bin` file.
+Maintains the list of todo items in binary file.
 
 ## Commands
 
