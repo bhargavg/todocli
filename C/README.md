@@ -33,5 +33,7 @@ $ git clone https://github.com/bhargavg/todocli
 $
 $ cd C/
 $
+$ # this will install the compiled binary in /usr/local/bin
+$ # for installing to other location, edit the "INSTALL_DIR" in make file
 $ make install
 ```
